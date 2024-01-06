@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SmogIt.Models\SmogIt.Models.csproj" />
+    <ProjectReference Include="..\SmogIt.Services\SmogIt.Services.csproj" />
+  </ItemGroup>
+
+</Project>

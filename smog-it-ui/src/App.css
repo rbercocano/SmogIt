@@ -1,0 +1,177 @@
+.App {
+    display: flex;
+}
+
+.app-container-wrapper {
+    padding: 0 3px;
+    position: relative;
+    float: left;
+    transition: width 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms, margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+}
+
+.app-container {
+    background-color: #fff;
+    color: rgba(0, 0, 0, 0.87);
+    -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    border-radius: 4px;
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+    padding: 16px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    margin: 5px 0 0 0;
+}
+
+Button.table-btn {
+    font-size: 12px;
+    max-width: 26px;
+    min-width: 26px;
+}
+
+.modal {
+    --bs-modal-margin: 100px;
+}
+
+.modal-title {
+    margin: 0;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 1.6;
+    letter-spacing: 0.0075em;
+    color: #1976d2;
+}
+
+.btn-primary {
+    border: 1px solid #3498db;
+    background-color: #3498db;
+}
+
+table.app-table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+table.app-table>thead {
+    display: table-header-group;
+}
+
+table.app-table>thead>tr {
+    color: inherit;
+    display: table-row;
+    vertical-align: middle;
+    outline: 0;
+}
+
+table.app-table>thead>tr>th {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+    letter-spacing: 0.01071em;
+    display: table-cell;
+    vertical-align: inherit;
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
+    text-align: left;
+    padding: 6px 16px;
+    color: rgba(0, 0, 0, 0.87);
+    font-weight: bold;
+}
+
+table.app-table>thead>tr>th>span.sortable {
+    cursor: pointer;
+}
+
+table.app-table>tbody {
+    display: table-row-group;
+}
+
+table.app-table>tbody>tr {
+    color: inherit;
+    display: table-row;
+    vertical-align: middle;
+    outline: 0;
+}
+
+table.app-table>tbody>tr.odd {
+    background-color: #f2f2f2;
+}
+
+table.app-table>tbody>tr>td {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.43;
+    letter-spacing: 0.01071em;
+    display: table-cell;
+    vertical-align: inherit;
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
+    text-align: left;
+    padding: 6px 16px;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+div.page-size {
+    position: relative;
+    float: left;
+    width: 75px;
+
+}
+
+div.search {
+    position: relative;
+    float: left;
+    width: calc(100% - 75px)
+}
+
+div.search input {
+    float: right;
+    width: 300px;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.pagination button,
+.pagination span {
+    display: inline-block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #fff !important;
+    border: 1px solid #3498db;
+    background-color: #3498db;
+}
+
+.pagination a:hover {
+    background-color: #457595;
+    color: #fff !important;
+    cursor: pointer;
+}
+
+.pagination .active {
+    background-color: #457595;
+    color: #fff !important;
+}
+
+.pagination button:first-child {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.pagination button:last-child {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}

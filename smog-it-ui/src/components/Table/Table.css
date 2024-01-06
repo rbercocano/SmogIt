@@ -1,0 +1,124 @@
+table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+table>thead {
+    display: table-header-group;
+}
+
+table>thead>tr {
+    color: inherit;
+    display: table-row;
+    vertical-align: middle;
+    outline: 0;
+}
+
+table>thead>tr>th {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+    letter-spacing: 0.01071em;
+    display: table-cell;
+    vertical-align: inherit;
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
+    text-align: left;
+    padding: 6px 16px;
+    color: rgba(0, 0, 0, 0.87);
+    font-weight: bold;
+}
+
+table>thead>tr>th>span.sortable {
+    cursor: pointer;
+    display: block;
+}
+
+table>tbody {
+    display: table-row-group;
+}
+
+table>tbody>tr {
+    color: inherit;
+    display: table-row;
+    vertical-align: middle;
+    outline: 0;
+}
+
+table>tbody>tr.odd {
+    background-color: #f2f2f2;
+}
+
+table>tbody>tr>td {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.43;
+    letter-spacing: 0.01071em;
+    display: table-cell;
+    vertical-align: inherit;
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
+    text-align: left;
+    padding: 6px 16px;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+div.page-size {
+    position: relative;
+    float: left;
+    width: 75px;
+
+}
+
+div.search {
+    position: relative;
+    float: left;
+    width: calc(100% - 75px)
+}
+
+div.search input {
+    float: right;
+    width: 300px;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.pagination button,
+.pagination span {
+    display: inline-block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #fff !important;
+    border: 1px solid #3498db;
+    background-color: #3498db;
+}
+
+.pagination a:hover {
+    background-color: #457595;
+    color: #fff !important;
+    cursor: pointer;
+}
+
+.pagination .active {
+    background-color: #457595;
+    color: #fff !important;
+}
+
+.pagination button:first-child {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.pagination button:last-child {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
