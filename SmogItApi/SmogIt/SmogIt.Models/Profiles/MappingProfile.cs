@@ -9,6 +9,7 @@ namespace SmogIt.Models.Profiles
         public MappingProfile()
         {
             CreateMap<ClientModel, Client>().ReverseMap();
+            CreateMap<ClientDetailsModel, Client>().ReverseMap();
         }
     }
 }

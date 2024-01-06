@@ -7,6 +7,7 @@ using SmogIt.Coordinator.Contracts;
 using SmogIt.Data.Context;
 using SmogIt.Data.Contracts;
 using SmogIt.Data.Repositories;
+using SmogIt.Models.Core;
 using SmogIt.Models.Profiles;
 using SmogIt.Services;
 using SmogIt.Services.Contracts;
@@ -36,6 +37,7 @@ builder.Services.AddScoped<IClientService, ClientService>();
 
 builder.Services.AddScoped<IClientCoordinator, ClientCoordinator>();
 
+builder.Services.AddScoped<NotificationService>();
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();

@@ -32,10 +32,10 @@ namespace SmogIt.API.Controllers.v1
         }
 
         [HttpPost]
-        public IActionResult Createclient([FromBody] ClientModel client)
+        public async Task<ActionResult> Createclient([FromBody] ClientModel client)
         {
-            // Implement your logic to create a new client
-            return Ok(new { Message = "client created successfully" });
+            var id = await clientCoordinator.AddAsync(client);
+            return new ObjectResult(id) { StatusCode = 201 };
         }
 
         [HttpPut("{id}")]
