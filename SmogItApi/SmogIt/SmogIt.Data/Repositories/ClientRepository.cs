@@ -8,7 +8,7 @@ namespace SmogIt.Data.Repositories
 {
     public class ClientRepository(SmogItContext context) : IClientRepository
     {
-        public async Task<Models.Core.PagedResult<Client>> GetclientsAsync(int pageSize, int page, string sortBy = "FirstName", string direction = "asc", string q = "")
+        public async Task<Models.Core.PagedResult<Client>> GetClientsAsync(int pageSize, int page, string sortBy = "FirstName", string direction = "asc", string q = "")
         {
             var query = context.Clients.AsQueryable();
             if (!string.IsNullOrEmpty(q))
@@ -28,7 +28,24 @@ namespace SmogIt.Data.Repositories
         public async Task<int> AddAsync(Client client)
         {
             var c = await context.Clients.AddAsync(client);
+            context.SaveChanges();
             return c.Entity.ClientId;
+        }
+        public async Task<bool> UpdateAsync(Client client)
+        {
+            var rows = await context.Clients.Where(c => c.ClientId == client.ClientId)
+                             .ExecuteUpdateAsync(setters =>
+                                setters.SetProperty(b => b.LastName, client.LastName)
+                               .SetProperty(b => b.FirstName, client.FirstName)
+                               .SetProperty(b => b.Email, client.Email)
+                               .SetProperty(b => b.Phone, client.Phone));
+            await context.SaveChangesAsync();
+            return rows > 0;
+        }
+        public async Task<Client?> FindAsync(int id)
+        {
+            var c = await context.Clients.FindAsync(id);
+            return c;
         }
     }
 }

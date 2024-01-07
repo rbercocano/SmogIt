@@ -14,15 +14,11 @@ using SmogIt.Services.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Configuration.AddJsonFile("appsettings.json");
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddDbContext<SmogItContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    // Enable logging
     options.EnableSensitiveDataLogging();
-    // Configure logging
     options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
@@ -46,6 +42,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddApiVersioning(options =>
 {
     options.DefaultApiVersion = new ApiVersion(1, 0);
@@ -55,7 +52,6 @@ builder.Services.AddApiVersioning(options =>
 });
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

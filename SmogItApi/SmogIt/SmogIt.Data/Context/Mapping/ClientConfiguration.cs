@@ -15,7 +15,7 @@ namespace SmogIt.Data.Context.Mapping
             builder.Property(c => c.LastName);
             builder.Property(c => c.Email).HasMaxLength(200);
             builder.Property(c => c.Phone).IsRequired();
-            builder.Property(c => c.RegistrationDate).IsRequired();
+            builder.Property(c => c.RegistrationDate).IsRequired().HasDefaultValueSql("GETDATE()");
 
             builder.HasMany(c => c.Appointments)
                 .WithOne(a => a.Client)

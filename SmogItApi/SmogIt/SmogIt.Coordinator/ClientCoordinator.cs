@@ -1,7 +1,6 @@
 ﻿using SmogIt.Coordinator.Contracts;
 using SmogIt.Models.Core;
 using SmogIt.Models.DTO;
-using SmogIt.Models.Entities;
 using SmogIt.Services.Contracts;
 
 namespace SmogIt.Coordinator
@@ -9,10 +8,11 @@ namespace SmogIt.Coordinator
     public class ClientCoordinator(IClientService clientService) : IClientCoordinator
     {
 
-        public async Task<PagedResult<ClientDetailsModel>> GetclientsAsync(int pageSize, int page, string? sortBy, string? direction, string? q)
+        public async Task<PagedResult<ClientDetailsModel>> GetClientsAsync(int pageSize, int page, string? sortBy, string? direction, string? q)
         {
-            return await clientService.GetclientsAsync(pageSize, page, sortBy, direction, q);
+            return await clientService.GetClientsAsync(pageSize, page, sortBy, direction, q);
         }
         public async Task<int> AddAsync(ClientModel client) => await clientService.AddAsync(client);
+        public async Task UpdateAsync(int id, ClientModel client) => await clientService.UpdateAsync(id, client);
     }
 }

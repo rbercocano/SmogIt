@@ -6,9 +6,9 @@
 
         public IReadOnlyList<Notification> Notifications => _notifications;
 
-        public void AddNotification(string key, string message)
+        public void AddNotification( string message)
         {
-            var notification = new Notification(key, message);
+            var notification = new Notification( message);
             _notifications.Add(notification);
         }
 

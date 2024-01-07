@@ -9,18 +9,14 @@ namespace SmogIt.API.Controllers.v1
     [Route("api/[controller]")]
     [ApiVersion(1.0)]
     [ApiController]
-    public class ClientController : ControllerBase
+    public class ClientController(IClientCoordinator clientCoordinator, NotificationService notificationService) : ControllerBase
     {
-        private readonly IClientCoordinator clientCoordinator;
+        private readonly IClientCoordinator clientCoordinator = clientCoordinator;
 
-        public ClientController(IClientCoordinator clientCoordinator)
-        {
-            this.clientCoordinator = clientCoordinator;
-        }
         [HttpGet("{pageSize:int}/{page:int}")]
-        public async Task<ActionResult<PagedResult<ClientModel>>> GetclientsAsync(int pageSize, int page, [FromQuery] string? sortBy, [FromQuery] string? direction, [FromQuery] string? q)
+        public async Task<ActionResult<PagedResult<ClientModel>>> GetClientsAsync(int pageSize, int page, [FromQuery] string? sortBy, [FromQuery] string? direction, [FromQuery] string? q)
         {
-            var data = await clientCoordinator.GetclientsAsync(pageSize, page, sortBy, direction, q);
+            var data = await clientCoordinator.GetClientsAsync(pageSize, page, sortBy, direction, q);
             return Ok(data);
         }
 
@@ -39,10 +35,12 @@ namespace SmogIt.API.Controllers.v1
         }
 
         [HttpPut("{id}")]
-        public IActionResult Updateclient(int id, [FromBody] ClientModel client)
+        public async Task<ActionResult> Updateclient(int id, [FromBody] ClientModel client)
         {
-            // Implement your logic to update a client by ID
-            return Ok(new { Message = $"client with ID {id} updated successfully" });
+            await clientCoordinator.UpdateAsync(id, client);
+            if (notificationService.HasNotifications())
+                return BadRequest(notificationService.Notifications);
+            return NoContent();
         }
     }
 }

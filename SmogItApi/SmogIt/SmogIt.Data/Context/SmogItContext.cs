@@ -8,9 +8,9 @@ namespace SmogIt.Data.Context
 
     public class SmogItContext : DbContext
     {
-        public SmogItContext(DbContextOptions<SmogItContext> options): base(options)
+        public SmogItContext(DbContextOptions<SmogItContext> options) : base(options)
         {
-                
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;            
         }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AppointmentService> AppointmentServices { get; set; }
