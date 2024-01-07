@@ -7,7 +7,7 @@ using SmogIt.Models.DTO;
 namespace SmogIt.API.Controllers.v1
 {
     [Route("api/[controller]")]
-    [ApiVersion(1.0)]
+    [ApiVersion(1.0)]   
     [ApiController]
     public class ClientController(IClientCoordinator clientCoordinator, NotificationService notificationService) : ControllerBase
     {
