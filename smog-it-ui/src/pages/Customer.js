@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Table from '../components/Table/Table';
 import Title from '../components/Title/Title';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import * as Yup from "yup";
@@ -22,7 +22,7 @@ function Customer() {
     { id: 2, vehicle: 'Mercedez c300', plate: '182X0O9P', status: 'Completed', date: '01/04/2024 8:33' }, { id: 3, vehicle: 'Mercedez c300', plate: '182X0O9P', status: 'Cancelled', date: '01/03/2024 10:00' }]);
     const [customer, setCustomer] = useState({ firstName: '', lastName: '', email: '', phone: '' });
     const [validationErrors, setValidationErrors] = useState({ firstName: '', lastName: '', email: '', phone: '' });
-
+   
     const handleCustomerSave = () => {
         try {
             validationSchema.validateSync(customer, { abortEarly: false });

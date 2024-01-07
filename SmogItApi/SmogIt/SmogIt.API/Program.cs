@@ -49,6 +49,15 @@ builder.Services.AddApiVersioning(options =>
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.ReportApiVersions = true;
     options.ApiVersionReader = new QueryStringApiVersionReader("api-version");
+}); 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
 });
 var app = builder.Build();
 
@@ -60,7 +69,7 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "SmogIt API");
     });
 }
-
+app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.UseExceptionHandler("/error");

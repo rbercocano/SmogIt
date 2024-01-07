@@ -6,6 +6,7 @@ import { faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Form from 'react-bootstrap/Form';
 import ConfirmationModal from '../components/ConfirmationModal/ConfirmationModal';
+import clientService from '../services/ClientService';
 function Customers() {
     const [data, setData] = useState([]);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -26,28 +27,13 @@ function Customers() {
         }
     }, [selectedCustomer]);
     useEffect(() => {
-        let _data = []
-        for (var i = 1; i <= 97; i++) {
-            _data.push({
-                id: i,
-                firstName: `Rodrigo ${i}`,
-                lastName: 'Amaral',
-                email: `r${i}@gmail.com`,
-                phone: `(916) 402 00${i.toString().padStart(2, '0')}`,
-                vehicles: [{
-                    id: i,
-                    make: 'Honda',
-                    model: 'Civic',
-                    plate: `ABC${i}D99`
-                }, {
-                    id: i + 1,
-                    make: 'Honda',
-                    model: 'Pilot',
-                    plate: `XYZ${i}D99`
-                }]
-            });
-        }
-        setData(_data);
+        const fetchData = async () => {
+            const data = await clientService.search(10, 1, 'firstName', 'desc', '');
+            setSort({sortBy:'firstName',direction:'asc'});
+            setData(data.items);
+        };
+
+        fetchData();
     }, []);
     const handleCustomerSave = useCallback(() => {
         let errors = {};
@@ -80,9 +66,9 @@ function Customers() {
         </tr>
     );
     const rowTemplate = useCallback((rowData, index) => {
-        const { id, firstName, lastName, email, phone } = rowData;
+        const { clientId, firstName, lastName, email, phone } = rowData;
         return (
-            <tr key={id} className={index % 2 === 0 ? 'odd' : null}>
+            <tr key={clientId} className={index % 2 === 0 ? 'odd' : null}>
                 <td>{firstName} {lastName}</td>
                 <td>{email}</td>
                 <td>{phone}</td>
