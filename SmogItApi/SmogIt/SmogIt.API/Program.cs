@@ -7,7 +7,7 @@ using SmogIt.Coordinator.Contracts;
 using SmogIt.Data.Context;
 using SmogIt.Data.Contracts;
 using SmogIt.Data.Repositories;
-using SmogIt.Models.Core;
+using SmogIt.Core.Services;
 using SmogIt.Models.Profiles;
 using SmogIt.Services;
 using SmogIt.Services.Contracts;

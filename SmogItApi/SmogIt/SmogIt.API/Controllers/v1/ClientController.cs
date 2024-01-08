@@ -1,7 +1,8 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using SmogIt.Coordinator.Contracts;
-using SmogIt.Models.Core;
+using SmogIt.Core.Domains;
+using SmogIt.Core.Services;
 using SmogIt.Models.DTO;
 
 namespace SmogIt.API.Controllers.v1

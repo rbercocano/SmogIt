@@ -1,5 +1,4 @@
-﻿using SmogIt.Models.Core;
-using SmogIt.Models.Entities;
+﻿using SmogIt.Models.Entities;
 
 namespace SmogIt.Data.Contracts
 {
@@ -7,7 +6,7 @@ namespace SmogIt.Data.Contracts
     {
         Task<int> AddAsync(Client client);
         Task<Client?> FindAsync(int id);
-        Task<PagedResult<Client>> GetClientsAsync(int pageSize, int page, string sortBy, string direction, string q);
+        Task<Core.Domains.PagedResult<Client>> GetClientsAsync(int pageSize, int page, string sortBy, string direction, string q);
         Task<bool> UpdateAsync(Client client);
     }
 }

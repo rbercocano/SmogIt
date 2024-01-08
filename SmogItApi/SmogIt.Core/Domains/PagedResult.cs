@@ -1,4 +1,4 @@
-﻿namespace SmogIt.Models.Core
+﻿namespace SmogIt.Core.Domains
 {
     public class PagedResult<T>
     {

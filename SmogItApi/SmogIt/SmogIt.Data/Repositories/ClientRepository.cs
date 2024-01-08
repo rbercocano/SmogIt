@@ -8,7 +8,7 @@ namespace SmogIt.Data.Repositories
 {
     public class ClientRepository(SmogItContext context) : IClientRepository
     {
-        public async Task<Models.Core.PagedResult<Client>> GetClientsAsync(int pageSize, int page, string sortBy = "FirstName", string direction = "asc", string q = "")
+        public async Task<Core.Domains.PagedResult<Client>> GetClientsAsync(int pageSize, int page, string sortBy = "FirstName", string direction = "asc", string q = "")
         {
             var query = context.Clients.AsQueryable();
             if (!string.IsNullOrEmpty(q))
@@ -22,7 +22,7 @@ namespace SmogIt.Data.Repositories
             query = query.OrderBy($"{sortBy} {direction}");
             var count = await query.CountAsync();
             var data = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-            return new Models.Core.PagedResult<Client>(page, pageSize, count, data);
+            return new Core.Domains.PagedResult<Client>(page, pageSize, count, data);
         }
         public async Task<int> AddAsync(Client client)
         {

@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using SmogIt.Data.Contracts;
-using SmogIt.Models.Core;
+using SmogIt.Core.Domains;
 using SmogIt.Models.DTO;
 using SmogIt.Models.Entities;
 using SmogIt.Services.Contracts;
+using SmogIt.Core.Services;
 
 namespace SmogIt.Services
 {
