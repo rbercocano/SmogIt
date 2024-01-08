@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\SmogIt.Core\SmogIt.Core.csproj" />
     <ProjectReference Include="..\SmogIt.Coordinator\SmogIt.Coordinator.csproj" />
     <ProjectReference Include="..\SmogIt.Models\SmogIt.Models.csproj" />
     <ProjectReference Include="..\SmogIt.Data\SmogIt.Data.csproj" />

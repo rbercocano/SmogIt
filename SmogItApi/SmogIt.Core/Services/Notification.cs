@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmogIt.Models.Core
+namespace SmogIt.Core.Services
 {
     public class Notification
     {

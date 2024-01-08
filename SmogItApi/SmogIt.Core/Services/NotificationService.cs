@@ -1,4 +1,4 @@
-﻿namespace SmogIt.Models.Core
+﻿namespace SmogIt.Core.Services
 {
     public class NotificationService
     {
