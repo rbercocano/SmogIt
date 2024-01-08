@@ -13,10 +13,9 @@ namespace SmogIt.Data.Repositories
             var query = context.Clients.AsQueryable();
             if (!string.IsNullOrEmpty(q))
                 query = query.Where(c =>
-                    c.FirstName.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
-                    c.LastName.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
-                    c.Email.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
-                    c.RegistrationDate.ToString("G").Contains(q, StringComparison.CurrentCultureIgnoreCase));
+                    c.FirstName.ToLower().Contains(q.ToLower()) ||
+                    c.LastName.ToLower().Contains(q.ToLower()) ||
+                    c.Email.ToLower().Contains(q.ToLower()));
 
             sortBy = string.IsNullOrEmpty(sortBy) ? "FirstName" : sortBy;
             direction = direction?.ToLower() == "desc" ? "desc" : "asc";

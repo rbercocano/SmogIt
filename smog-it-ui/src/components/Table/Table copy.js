@@ -3,27 +3,36 @@ import ColumnHeader from './ColumnHeader';
 import './Table.css';
 import Form from 'react-bootstrap/Form';
 import Paginator from './Paginator';
-import { useWhatChanged } from '@simbathesailor/use-what-changed';
 
-function Table({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, headerTemplate, serverSide }) {
+function Table2({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, headerTemplate, serverSide }) {
     const colCount = React.Children.toArray(headerTemplate().props.children).length;
     const [displayedData, setDisplayedData] = useState([]);
     const [pageSize, setPageSize] = useState(rowsPerPage ?? 10);
     const [rowCount, setRowCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
+    const [_data, setData] = useState(data);
     const columns = React.Children.toArray(headerTemplate().props.children)
         .filter(child => child.props.sortKey)
         .map(child => child.props.sortKey);
 
-    useWhatChanged([sortBy, direction, currentPage, pageSize, searchQuery], 'sortBy, direction, currentPage, pageSize, searchQuery');
     useEffect(() => {
         render();
-    }, [data]);
+        if (onChange) {
+            let data = onChange(sortBy, direction, currentPage, pageSize, searchQuery);
+        }
+    }, [currentPage]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+        render();
+    }, [data, searchQuery, sortBy, direction, pageSize]);
+
+
     const render = () => {
         if (serverSide) {
-            setDisplayedData(data.items ?? []);
             setRowCount(data.totalItems ?? 0);
+            setDisplayedData(data.items ?? []);
         } else {
             const searchValue = searchQuery.toLowerCase();
             const d = data.map(v => {
@@ -56,7 +65,7 @@ function Table({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, he
     const onSearchChange = (e) => {
         setSearchQuery(e.target.value);
         if (onChange) {
-            onChange(sortBy, direction, currentPage, pageSize, e.target.value);
+            data = onChange(sortBy, direction, currentPage, pageSize, searchQuery);
         }
     }
     const handlePageChange = (currentPage) => {
@@ -97,4 +106,4 @@ function Table({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, he
     );
 }
 
-export default Object.assign(Table, { ColumnHeader });
+export default Object.assign(Table2, { ColumnHeader });
