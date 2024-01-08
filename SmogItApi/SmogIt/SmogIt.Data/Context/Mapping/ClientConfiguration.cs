@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using SmogIt.Models.Entities;
+using SmogIt.Core.Extenstions;
 
 namespace SmogIt.Data.Context.Mapping
 {
@@ -14,7 +15,7 @@ namespace SmogIt.Data.Context.Mapping
             builder.Property(c => c.FirstName).IsRequired();
             builder.Property(c => c.LastName);
             builder.Property(c => c.Email).HasMaxLength(200);
-            builder.Property(c => c.Phone).IsRequired();
+            builder.Property(c => c.Phone).HasConversion(to => to.FormatAsUSPhoneNumber(), from => from).IsRequired();
             builder.Property(c => c.RegistrationDate).IsRequired().HasDefaultValueSql("GETDATE()");
 
             builder.HasMany(c => c.Appointments)
