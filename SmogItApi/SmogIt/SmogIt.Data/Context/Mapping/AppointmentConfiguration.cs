@@ -8,7 +8,7 @@ namespace SmogIt.Data.Context.Mapping
     {
         public void Configure(EntityTypeBuilder<Appointment> builder)
         {
-            builder.ToTable("Vehicles");
+            builder.ToTable("Appointments");
             builder.HasKey(a => a.AppointmentId);
             builder.Property(a => a.AppointmentId).IsRequired();
             builder.Property(a => a.VehicleId).IsRequired();
