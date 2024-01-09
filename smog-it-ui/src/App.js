@@ -1,10 +1,10 @@
-
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import { useContext } from 'react';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import { faHouse, faUsers, faCalendar, faCog } from '@fortawesome/free-solid-svg-icons';
 import Customers from './pages/Customers';
@@ -30,6 +30,7 @@ function App() {
             <Routes>
               <Route path='/customers' element={<Customers />} />
               <Route path='/customer' element={<Customer />} />
+              <Route path='/customer/:id' element={<Customer />} />
             </Routes>
           </ContentWrapper>
         </AppContext>

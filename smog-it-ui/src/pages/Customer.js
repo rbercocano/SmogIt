@@ -1,13 +1,17 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Table from '../components/Table/Table';
 import Title from '../components/Title/Title';
-import { useState } from 'react';
-import TextField from '@mui/material/TextField';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import * as Yup from "yup";
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Badge from '../components/Badge/Badge';
 import Toolbar from '../components/Toolbar/Toolbar';
+import clientService from '../services/ClientService';
+import { useParams } from 'react-router-dom';
+import { useForm } from "react-hook-form";
+import { FormInputText } from '../components/FormInputs/FormInputText';
 const validationSchema = Yup.object({
     firstName: Yup.string().required('Required field'),
     lastName: Yup.string().required('Required field'),
@@ -15,33 +19,55 @@ const validationSchema = Yup.object({
     email: Yup.string().email('Invalid e-mail')
 });
 function Customer() {
+    const navigate = useNavigate();
+    const { id } = useParams();
     const [vehicleSort, setVehicleSort] = useState({ sortBy: '', direction: '' });
     const [vehicles, setVehicles] = useState([{ id: 1, make: 'Honda', model: 'Civic', plate: '999ASYF' }, { id: 2, make: 'Mercedez', model: 'c300', plate: '182X0O9P' }]);
     const [apptSort, setApptSort] = useState({ sortBy: '', direction: '' });
     const [appointments, setAppointments] = useState([{ id: 1, vehicle: 'Honda Civic', plate: '999ASYF', status: 'Pending', date: '01/04/2024 10:59' },
     { id: 2, vehicle: 'Mercedez c300', plate: '182X0O9P', status: 'Completed', date: '01/04/2024 8:33' }, { id: 3, vehicle: 'Mercedez c300', plate: '182X0O9P', status: 'Cancelled', date: '01/03/2024 10:00' }]);
-    const [customer, setCustomer] = useState({ firstName: '', lastName: '', email: '', phone: '' });
-    const [validationErrors, setValidationErrors] = useState({ firstName: '', lastName: '', email: '', phone: '' });
-
-    const handleCustomerSave = () => {
-        try {
-            validationSchema.validateSync(customer, { abortEarly: false });
-            setValidationErrors({});
-        } catch (e) {
-            let error = {}
-            e.inner.forEach(err => {
-                error = { ...error, [err.path]: err.errors[0] };
-            });
-            setValidationErrors(error);
+    const form = useForm({
+        defaultValues: {
+            clientId: id,
+            firstName: '',
+            lastName: '',
+            phone: '',
+            email: ''
         }
-    };
-
-    const handleCostumerChange = (e) => {
-        const { name, value } = e.target;
-        setCustomer((prevCustomer) => ({
-            ...prevCustomer,
-            [name]: value,
-        }));
+    });
+    const { handleSubmit, setValue, control, setError, clearErrors, getValues } = form;
+    useEffect(() => {
+        if (id) {
+            clientService.get(id).then(result => {
+                const { firstName, lastName, phone, email } = result;
+                setValue('firstName', firstName);
+                setValue('lastName', lastName);
+                setValue('phone', phone);
+                setValue('email', email);
+            });
+        }
+    }, [])
+    const saveCustomer = async (data) => {
+        try {
+            validationSchema.validateSync(data, { abortEarly: false });
+            clearErrors();
+            let id = getValues('clientId');
+            if (id) {
+                clientService.update(id, data).then(r => { });
+            } else {
+                clientService.add(data).then(r => {
+                    setValue('clientId', r);
+                    navigate(`/customer/${r}`, { replace: true });
+                });
+            }
+        } catch (e) {
+            e.inner.forEach(err => {
+                setError(err.path, {
+                    type: "manual",
+                    message: err.errors[0]
+                });
+            });
+        }
     };
     const deleteVehicle = (vehicle) => {
 
@@ -115,46 +141,52 @@ function Customer() {
         <>
             <div className='app-container-wrapper col-6 '>
                 <div className="app-container" >
-                    <Title title='Customer' />
-                    <div className="row">
-                        <div className="col-6 mb-3">
-                            <TextField id="outlined-basic" label="First Name" variant="outlined" name="firstName"
-                                helperText={!!validationErrors.firstName && validationErrors.firstName}
-                                error={!!validationErrors.firstName}
-                                onChange={handleCostumerChange}
-                                size='small' className='w-100' />
+                    <form autoComplete='off' onSubmit={handleSubmit(saveCustomer)}>
+                        <Title title='Customer' />
+                        <div className="row">
+                            <div className="col-6 mb-3">
+                                <FormInputText
+                                    name={"firstName"}
+                                    control={control}
+                                    label={"First Name"}
+                                />
+                            </div>
+                            <div className="col-6 mb-3">
+                                <FormInputText
+                                    name={"lastName"}
+                                    control={control}
+                                    label={"Last Name"}
+                                />
+                            </div>
+                            <div className="col-6 mb-3">
+                                <FormInputText
+                                    name={"phone"}
+                                    control={control}
+                                    label={"Phone"}
+                                />
+                            </div>
+                            <div className="col-6 mb-3">
+                                <FormInputText
+                                    name={"email"}
+                                    control={control}
+                                    label={"email"}
+                                />
+                            </div>
+                            <div className="col-12 mb-3">
+                                <Button variant="contained" className='w-100' type='submit'>Save</Button>
+                            </div>
                         </div>
-                        <div className="col-6 mb-3">
-                            <TextField id="outlined-basic" label="Last Name" variant="outlined" name="lastName"
-                                helperText={!!validationErrors.lastName && validationErrors.lastName}
-                                error={!!validationErrors.lastName} onChange={handleCostumerChange}
-                                size='small' className='w-100' />
+                        <div className="mt-3">
+                            <Title title='Vehicles'>
+                                <Toolbar>
+                                    <Toolbar.Button faIcon={faPlus} toolTipText='Add Vehicle'></Toolbar.Button>
+                                </Toolbar>
+                            </Title>
+                            <Table data={vehicles} rowTemplate={vehicleRowTemplate}
+                                headerTemplate={vehicleHeaderTemplate} onChange={handleVehicleTableChange}
+                                sortBy={vehicleSort.sortBy} direction={vehicleSort.direction} />
                         </div>
-                        <div className="col-6 mb-3">
-                            <TextField id="outlined-basic" label="Phone" variant="outlined" name="phone"
-                                helperText={!!validationErrors.phone && validationErrors.phone}
-                                error={!!validationErrors.phone} onChange={handleCostumerChange}
-                                size='small' className='w-100' />
-                        </div>
-                        <div className="col-6 mb-3">
-                            <TextField id="outlined-basic" label="Email" variant="outlined"
-                                error={!!validationErrors.email} helperText={!!validationErrors.email && validationErrors.email}
-                                onChange={handleCostumerChange} size='small' className='w-100' name="email" />
-                        </div>
-                        <div className="col-12 mb-3">
-                            <Button variant="contained" className='w-100' onClick={handleCustomerSave}>Save</Button>
-                        </div>
-                    </div>
-                    <div className="mt-3">
-                        <Title title='Vehicles'>
-                            <Toolbar>
-                                <Toolbar.Button faIcon={faPlus} n toolTipText='Add Vehicle'></Toolbar.Button>
-                            </Toolbar>
-                        </Title>
-                        <Table data={vehicles} rowTemplate={vehicleRowTemplate}
-                            headerTemplate={vehicleHeaderTemplate} onChange={handleVehicleTableChange}
-                            sortBy={vehicleSort.sortBy} direction={vehicleSort.direction} />
-                    </div>
+                    </form>
                 </div>
             </div>
             <div className='app-container-wrapper col-6 '>

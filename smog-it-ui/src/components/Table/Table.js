@@ -20,6 +20,10 @@ function Table({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, he
     useEffect(() => {
         render();
     }, [data]);
+    useEffect(() => {
+        if (onChange)
+            onChange(sortBy, direction, currentPage, pageSize, searchQuery);
+    }, [currentPage]);
     const render = () => {
         if (serverSide) {
             setDisplayedData(data.items ?? []);

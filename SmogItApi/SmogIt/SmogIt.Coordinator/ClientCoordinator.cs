@@ -14,5 +14,6 @@ namespace SmogIt.Coordinator
         }
         public async Task<int> AddAsync(ClientModel client) => await clientService.AddAsync(client);
         public async Task UpdateAsync(int id, ClientModel client) => await clientService.UpdateAsync(id, client);
+        public async Task<ClientDetailsModel?> FindAsync(int id) => await clientService.FindAsync(id);
     }
 }
