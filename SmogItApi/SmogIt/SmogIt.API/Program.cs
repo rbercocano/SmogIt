@@ -29,6 +29,8 @@ builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+
+builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 
 builder.Services.AddScoped<IClientCoordinator, ClientCoordinator>();

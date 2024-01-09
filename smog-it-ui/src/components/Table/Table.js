@@ -4,6 +4,7 @@ import './Table.css';
 import Form from 'react-bootstrap/Form';
 import Paginator from './Paginator';
 import { useWhatChanged } from '@simbathesailor/use-what-changed';
+import { useDebouncedCallback } from 'use-debounce';
 
 function Table({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, headerTemplate, serverSide }) {
     const colCount = React.Children.toArray(headerTemplate().props.children).length;
@@ -57,12 +58,12 @@ function Table({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, he
     const onPageSizeChange = (e) => {
         setPageSize(parseInt(e.target.value))
     }
-    const onSearchChange = (e) => {
+    const onSearchChange = useDebouncedCallback((e) => {
         setSearchQuery(e.target.value);
         if (onChange) {
             onChange(sortBy, direction, currentPage, pageSize, e.target.value);
         }
-    }
+    }, 500);
     const handlePageChange = (currentPage) => {
         setCurrentPage(currentPage);
     }

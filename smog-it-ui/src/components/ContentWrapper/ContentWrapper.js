@@ -10,7 +10,8 @@ function ContentWrapper({ children }) {
             <div className={expanded ? 'content expanded' : 'content'}>
                 {children}
             </div>
-            {loading &&
+            {
+                loading &&
                 <div className={expanded ? 'app-loading expanded' : 'app-loading'}>
                     <div>
                         <h2>Loading...</h2>
