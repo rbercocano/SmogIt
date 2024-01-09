@@ -4,7 +4,7 @@ import clientService from '../services/ClientService';
 import Button from '@mui/material/Button';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { faPencil } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { OverlayLoadingContext } from '../contexts/OverlayLoadingContext';
@@ -44,25 +44,19 @@ function Customers() {
             </tr >
         );
     }, []);
-    const handleSort = useCallback((sortBy, direction) => {
-        setSort({ sortBy: sortBy, direction: direction });
-        const fetchData = async () => {
-            const data = await clientService.search(pageSize, currentPage, sortBy, direction, searchQuery);
-            setData(data);
-        };
-        return fetchData();
+    const handleSort = useCallback(async(sortBy, direction) => {
+        setSort({ sortBy: sortBy, direction: direction });        
+        const data = await clientService.search(pageSize, currentPage, sortBy, direction, searchQuery);
+        setData(data);
     }, []);
-    const handleTableChange = useCallback((sortBy, direction, currentPage, pageSize, searchQuery) => {
+    const handleTableChange = useCallback(async(sortBy, direction, currentPage, pageSize, searchQuery) => {
         setCurrentPage(currentPage);
         setPageSize(pageSize);
         setSearchQuery(searchQuery);
         setOverlayLoading(true);
-        const fetchData = async () => {
-            const data = await clientService.search(pageSize, currentPage, sortBy, direction, searchQuery);
-            setData(data);
-            setOverlayLoading(false);
-        };
-        return fetchData();
+        const data = await clientService.search(pageSize, currentPage, sortBy, direction, searchQuery);
+        setData(data);
+        setOverlayLoading(false);
     }, []);
 
     return (

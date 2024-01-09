@@ -23,21 +23,21 @@ namespace SmogIt.API.Controllers.v1
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ClientDetailsModel>> GetClientById(int id)
+        public async Task<ActionResult<ClientDetailsModel>> GetClientByIdAsync(int id)
         {
             var data = await clientCoordinator.FindAsync(id);
             return Ok(data);
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateClient([FromBody] ClientModel client)
+        public async Task<ActionResult> CreateClientAsync([FromBody] ClientModel client)
         {
             var id = await clientCoordinator.AddAsync(client);
             return new ObjectResult(id) { StatusCode = 201 };
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateClient(int id, [FromBody] ClientModel client)
+        public async Task<ActionResult> UpdateClientAsync(int id, [FromBody] ClientModel client)
         {
             await clientCoordinator.UpdateAsync(id, client);
             if (notificationService.HasNotifications())
@@ -54,8 +54,17 @@ namespace SmogIt.API.Controllers.v1
         }
 
         [HttpGet("{clientId}/Vehicles/{pageSize:int}/{page:int}")]
-        public async Task<ActionResult<ClientDetailsModel>> GetVehiclesByClientId(int clientId, int pageSize, int page, [FromQuery] string? sortBy, [FromQuery] string? direction, [FromQuery] string? q)
+        public async Task<ActionResult<ClientDetailsModel>> GetVehiclesByClientIdAsync(int clientId, int pageSize, int page, [FromQuery] string? sortBy, [FromQuery] string? direction, [FromQuery] string? q)
         {
+            switch (sortBy)
+            {
+                case "make":
+                    sortBy = "vehicleMake";break;
+                case "model":
+                    sortBy = "vehicleModel"; break;
+                default:
+                    break;
+            }
             var data = await clientCoordinator.GeVehiclestByClientAsync(clientId, pageSize, page, sortBy, direction, q);
             return Ok(data);
         }
