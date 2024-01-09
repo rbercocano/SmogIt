@@ -8,7 +8,7 @@ using SmogIt.Models.DTO;
 namespace SmogIt.API.Controllers.v1
 {
     [Route("api/[controller]")]
-    [ApiVersion(1.0)]   
+    [ApiVersion(1.0)]
     [ApiController]
     public class ClientController(IClientCoordinator clientCoordinator, NotificationService notificationService) : ControllerBase
     {
@@ -22,10 +22,10 @@ namespace SmogIt.API.Controllers.v1
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetclientById(int id)
+        public async Task<ActionResult<ClientDetailsModel>> GetclientById(int id)
         {
-            // Implement your logic to retrieve a client by ID
-            return Ok(new { Message = $"Get client with ID {id}" });
+            var data = await clientCoordinator.FindAsync(id);
+            return Ok(data);
         }
 
         [HttpPost]

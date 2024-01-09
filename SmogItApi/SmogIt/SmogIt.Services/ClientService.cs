@@ -34,5 +34,11 @@ namespace SmogIt.Services
             }
             return;
         }
+        public async Task<ClientDetailsModel?> FindAsync(int id)
+        {
+            var entity = await clientRepository.FindAsync(id);
+            var client = mapper.Map<ClientDetailsModel>(entity);
+            return client;
+        }
     }
 }

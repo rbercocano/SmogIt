@@ -1,9 +1,12 @@
 
 import { MenuContextProvider } from './MenuContext';
+import { OverlayLoadingContextProvider } from './OverlayLoadingContext';
 const AppContext = ({ children }) => {
     return (
         <MenuContextProvider>
-            {children}
+            <OverlayLoadingContextProvider>
+                {children}
+            </OverlayLoadingContextProvider>
         </MenuContextProvider>
     );
 };
