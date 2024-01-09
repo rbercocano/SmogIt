@@ -14,9 +14,6 @@ namespace SmogIt.Models.Entities
         public string Email { get; set; }
         public string Phone { get; set; }
         public DateTime RegistrationDate { get; set; }
-
-        // Navigation properties
-        public List<Appointment> Appointments { get; set; }
         public List<Vehicle> Vehicles { get; set; }
     }
 }

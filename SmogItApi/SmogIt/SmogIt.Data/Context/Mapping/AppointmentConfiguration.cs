@@ -10,15 +10,10 @@ namespace SmogIt.Data.Context.Mapping
         {
             builder.HasKey(a => a.AppointmentId);
             builder.Property(a => a.AppointmentId).IsRequired();
-            builder.Property(a => a.ClientId).IsRequired();
             builder.Property(a => a.VehicleId).IsRequired();
             builder.Property(a => a.StatusId).IsRequired();
             builder.Property(a => a.AppointmentDateTime).IsRequired();
             builder.Property(a => a.Notes).HasColumnType("text");
-
-            builder.HasOne(a => a.Client)
-                .WithMany(c => c.Appointments)
-                .HasForeignKey(a => a.ClientId);
 
             builder.HasOne(a => a.Vehicle)
                 .WithMany(v => v.Appointments)

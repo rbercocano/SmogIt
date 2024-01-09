@@ -21,8 +21,7 @@ export const OverlayLoadingContextProvider = ({ children }) => {
     const setOverlayLoading = useCallback(() => {
         dispatch({
             type: 'SHOW'
-        })
-
+        });
     }, []);
     return (
         <OverlayLoadingContext.Provider value={{ ...state, setOverlayLoading }}>

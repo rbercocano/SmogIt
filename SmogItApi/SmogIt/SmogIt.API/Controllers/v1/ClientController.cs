@@ -4,6 +4,7 @@ using SmogIt.Coordinator.Contracts;
 using SmogIt.Core.Domains;
 using SmogIt.Core.Services;
 using SmogIt.Models.DTO;
+using SmogIt.Models.Entities;
 
 namespace SmogIt.API.Controllers.v1
 {
@@ -22,26 +23,41 @@ namespace SmogIt.API.Controllers.v1
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ClientDetailsModel>> GetclientById(int id)
+        public async Task<ActionResult<ClientDetailsModel>> GetClientById(int id)
         {
             var data = await clientCoordinator.FindAsync(id);
             return Ok(data);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Createclient([FromBody] ClientModel client)
+        public async Task<ActionResult> CreateClient([FromBody] ClientModel client)
         {
             var id = await clientCoordinator.AddAsync(client);
             return new ObjectResult(id) { StatusCode = 201 };
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Updateclient(int id, [FromBody] ClientModel client)
+        public async Task<ActionResult> UpdateClient(int id, [FromBody] ClientModel client)
         {
             await clientCoordinator.UpdateAsync(id, client);
             if (notificationService.HasNotifications())
                 return BadRequest(notificationService.Notifications);
             return NoContent();
+        }
+
+
+        [HttpPost("Vehicle")]
+        public async Task<ActionResult> AddVehicle([FromBody] VehicleModel client)
+        {
+            var id = await clientCoordinator.AddVehicleAsync(client);
+            return new ObjectResult(id) { StatusCode = 201 };
+        }
+
+        [HttpGet("{clientId}/Vehicles/{pageSize:int}/{page:int}")]
+        public async Task<ActionResult<ClientDetailsModel>> GetVehiclesByClientId(int clientId, int pageSize, int page, [FromQuery] string? sortBy, [FromQuery] string? direction, [FromQuery] string? q)
+        {
+            var data = await clientCoordinator.GeVehiclestByClientAsync(clientId, pageSize, page, sortBy, direction, q);
+            return Ok(data);
         }
     }
 }

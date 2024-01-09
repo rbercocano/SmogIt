@@ -125,13 +125,7 @@ GO
 INSERT [dbo].[Status] ([StatusId], [StatusName]) VALUES (1, N'Pending')
 GO
 /****** Object:  Index [UC_Client_Appointment]    Script Date: 1/7/2024 7:14:58 PM ******/
-ALTER TABLE [dbo].[Appointments] ADD  CONSTRAINT [UC_Client_Appointment] UNIQUE NONCLUSTERED 
-(
-	[ClientId] ASC,
-	[VehicleId] ASC,
-	[AppointmentDateTime] ASC
-)
-GO
+
 SET ANSI_PADDING ON
 GO
 /****** Object:  Index [UQ__Status__05E7698AF3DD10C2]    Script Date: 1/7/2024 7:14:58 PM ******/
@@ -151,11 +145,6 @@ GO
 ALTER TABLE [dbo].[Clients] ADD  CONSTRAINT [DF__Clients__Registr__24927208]  DEFAULT (getdate()) FOR [RegistrationDate]
 GO
 ALTER TABLE [dbo].[Users] ADD  DEFAULT (getdate()) FOR [CreatedAt]
-GO
-ALTER TABLE [dbo].[Appointments]  WITH CHECK ADD  CONSTRAINT [FK__Appointme__Clien__2E1BDC42] FOREIGN KEY([ClientId])
-REFERENCES [dbo].[Clients] ([ClientId])
-GO
-ALTER TABLE [dbo].[Appointments] CHECK CONSTRAINT [FK__Appointme__Clien__2E1BDC42]
 GO
 ALTER TABLE [dbo].[Appointments]  WITH CHECK ADD  CONSTRAINT [FK__Appointme__Statu__300424B4] FOREIGN KEY([StatusId])
 REFERENCES [dbo].[Status] ([StatusId])

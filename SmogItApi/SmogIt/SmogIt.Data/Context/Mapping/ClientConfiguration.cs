@@ -18,10 +18,6 @@ namespace SmogIt.Data.Context.Mapping
             builder.Property(c => c.Phone).HasConversion(to => to.FormatAsUSPhoneNumber(), from => from).IsRequired();
             builder.Property(c => c.RegistrationDate).IsRequired().HasDefaultValueSql("GETDATE()");
 
-            builder.HasMany(c => c.Appointments)
-                .WithOne(a => a.Client)
-                .HasForeignKey(a => a.ClientId);
-
             builder.HasMany(c => c.Vehicles)
                 .WithOne(v => v.Client)
                 .HasForeignKey(v => v.ClientId);
