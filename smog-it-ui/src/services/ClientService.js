@@ -16,6 +16,13 @@ const clientService = {
   update: async (id, client) => {
     return await ApiClient.put(`${process.env.REACT_APP_API_BASE_URL}/Client/${id}`, client);
   },
+  searchVehicles: async (clientId,pageSize, page, sortBy, direction, q) => {
+    const params = {};
+    if (sortBy) params.sortBy = sortBy;
+    if (direction) params.direction = direction;
+    if (q) params.q = q;
+    return await ApiClient.get(`${process.env.REACT_APP_API_BASE_URL}/Client/${clientId}/Vehicles/${pageSize}/${page}`, params);
+  },
 };
 
 export default clientService;

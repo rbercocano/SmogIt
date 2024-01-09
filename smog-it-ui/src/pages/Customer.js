@@ -21,11 +21,14 @@ const validationSchema = Yup.object({
 function Customer() {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [vehicleSort, setVehicleSort] = useState({ sortBy: '', direction: '' });
-    const [vehicles, setVehicles] = useState([{ id: 1, make: 'Honda', model: 'Civic', plate: '999ASYF' }, { id: 2, make: 'Mercedez', model: 'c300', plate: '182X0O9P' }]);
+    const [vehicleSort, setVehicleSort] = useState({ sortBy: 'make', direction: 'asc' });
+    const [vehicles, setVehicles] = useState([]);
+    const [vehicleCurrentPage, setVehicleCurrentPage] = useState(1);
+    const [vehiclePageSize, setVehiclePageSize] = useState(10);
+    const [vehicleSearchQuery, setVehicleSearchQuery] = useState('');
+
     const [apptSort, setApptSort] = useState({ sortBy: '', direction: '' });
-    const [appointments, setAppointments] = useState([{ id: 1, vehicle: 'Honda Civic', plate: '999ASYF', status: 'Pending', date: '01/04/2024 10:59' },
-    { id: 2, vehicle: 'Mercedez c300', plate: '182X0O9P', status: 'Completed', date: '01/04/2024 8:33' }, { id: 3, vehicle: 'Mercedez c300', plate: '182X0O9P', status: 'Cancelled', date: '01/03/2024 10:00' }]);
+    const [appointments, setAppointments] = useState([]);
     const form = useForm({
         defaultValues: {
             clientId: id,
@@ -36,7 +39,7 @@ function Customer() {
         }
     });
     const { handleSubmit, setValue, control, setError, clearErrors, getValues } = form;
-    useEffect(() => {
+    useEffect(async () => {
         if (id) {
             clientService.get(id).then(result => {
                 const { firstName, lastName, phone, email } = result;
@@ -96,10 +99,19 @@ function Customer() {
         );
     };
 
-    const handleVehicleSort = (sortBy, direction) => {
+    const handleVehicleSort = async (sortBy, direction) => {
         setVehicleSort({ sortBy: sortBy, direction: direction });
+        const data = await clientService.searchVehicles(id, vehiclePageSize, vehicleCurrentPage, sortBy, direction, vehicleSearchQuery);
+        setVehicles(data.items);
     };
-    const handleVehicleTableChange = (sortBy, direction, currentPage, pageSize, searchQuery) => {
+    const handleVehicleTableChange = async (sortBy, direction, currentPage, pageSize, searchQuery) => {
+        setVehicleCurrentPage(currentPage);
+        setVehiclePageSize(pageSize);
+        setVehicleSearchQuery(searchQuery);
+        let id = getValues('clientId');
+        const data = await clientService.searchVehicles(id, pageSize, currentPage, sortBy, direction, searchQuery);
+        setVehicles(data.items);
+        return data;
     };
 
 
