@@ -1,5 +1,7 @@
-﻿using SmogIt.Data.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using SmogIt.Data.Context;
 using SmogIt.Data.Contracts;
+using SmogIt.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +19,9 @@ namespace SmogIt.Data.Repositories
             _context = context;
         }
 
-        // Similar CRUD operations for Vehicle entity (asynchronous)
+        public async Task<List<Vehicle>> GetByClient(int clientId) {
+            var data = await _context.Vehicles.Where(v => v.ClientId == clientId).ToListAsync();
+            return data; 
+        }
     }
 }
