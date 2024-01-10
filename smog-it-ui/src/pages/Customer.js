@@ -109,9 +109,11 @@ function Customer() {
         setVehiclePageSize(pageSize);
         setVehicleSearchQuery(searchQuery);
         let id = getValues('clientId');
-        const data = await clientService.searchVehicles(id, pageSize, currentPage, sortBy, direction, searchQuery);
-        setVehicles(data.items);
-        return data;
+        if (id) {
+            const data = await clientService.searchVehicles(id, pageSize, currentPage, sortBy, direction, searchQuery);
+            setVehicles(data.items);
+            return data;
+        }
     };
 
 

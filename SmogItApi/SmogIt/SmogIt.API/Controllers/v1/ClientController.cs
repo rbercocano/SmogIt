@@ -46,10 +46,10 @@ namespace SmogIt.API.Controllers.v1
         }
 
 
-        [HttpPost("Vehicle")]
-        public async Task<ActionResult> AddVehicle([FromBody] VehicleModel client)
+        [HttpPost("Vehicles")]
+        public async Task<ActionResult> AddVehicleAsync([FromBody] VehicleModel vehicle)
         {
-            var id = await clientCoordinator.AddVehicleAsync(client);
+            var id = await clientCoordinator.AddVehicleAsync(vehicle);
             return new ObjectResult(id) { StatusCode = 201 };
         }
 
@@ -65,7 +65,29 @@ namespace SmogIt.API.Controllers.v1
                 default:
                     break;
             }
-            var data = await clientCoordinator.GeVehiclestByClientAsync(clientId, pageSize, page, sortBy, direction, q);
+            var data = await clientCoordinator.GeVehiclesByClientAsync(clientId, pageSize, page, sortBy, direction, q);
+            return Ok(data);
+        }
+
+        [HttpPost("Appointments")]
+        public async Task<ActionResult> AddAppointmentAsync([FromBody] AppointmentModel appointment)
+        {
+            var id = await clientCoordinator.AddAppointmentAsync(appointment);
+            return new ObjectResult(id) { StatusCode = 201 };
+        }
+        [HttpGet("{clientId}/Appointments/{pageSize:int}/{page:int}")]
+        public async Task<ActionResult<AppointmentDetailsModel>> GetAppointmentsByClientIdAsync(int clientId, int pageSize, int page, [FromQuery] string? sortBy, [FromQuery] string? direction, [FromQuery] string? q)
+        {
+            switch (sortBy)
+            {
+                case "make":
+                    sortBy = "vehicleMake"; break;
+                case "model":
+                    sortBy = "vehicleModel"; break;
+                default:
+                    break;
+            }
+            var data = await clientCoordinator.GeVehiclesByClientAsync(clientId, pageSize, page, sortBy, direction, q);
             return Ok(data);
         }
     }
