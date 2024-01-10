@@ -2,38 +2,38 @@
 using SmogIt.Data.Context;
 using SmogIt.Data.Contracts;
 using SmogIt.Models.Entities;
+using System.Linq.Dynamic.Core;
 
 namespace SmogIt.Data.Repositories
 {
-    public class AppointmentRepository : IAppointmentRepository
+    public class AppointmentRepository(SmogItContext context) : IAppointmentRepository
     {
-        private readonly SmogItContext _context;
-
-        public AppointmentRepository(SmogItContext context)
+        public async Task<Core.Domains.PagedResult<Appointment>> GetByClientAsync(int clientId, int pageSize, int page, string sortBy = "AppointmentDateTime", string direction = "desc", string q = "")
         {
-            _context = context;
+            var query = context.Appointments
+                .Include(c => c.Vehicle)
+                .Include(c => c.Status)
+                .Include(c => c.AppointmentServices)
+                .ThenInclude(c => c.Service)
+                .Where(v => v.Vehicle.ClientId == clientId);
+            if (!string.IsNullOrEmpty(q))
+                query = query.Where(c =>
+                    c.Status.StatusName.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
+                    c.Vehicle.VehicleMake.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
+                    c.Vehicle.VehicleModel.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
+                    c.Vehicle.LicensePlate.Contains(q, StringComparison.CurrentCultureIgnoreCase));
+            sortBy = string.IsNullOrEmpty(sortBy) ? "AppointmentDateTime" : sortBy;
+            direction = direction?.ToLower() == "desc" ? "desc" : "asc";
+            query = query.OrderBy($"{sortBy} {direction}");
+            var count = await query.CountAsync();
+            var data = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            return new Core.Domains.PagedResult<Appointment>(page, pageSize, count, data);
         }
-
-        public async Task<IEnumerable<Appointment>> GetAllAppointmentsAsync()
+        public async Task<int> AddAsync(Appointment appointment)
         {
-            return await _context.Appointments.ToListAsync();
-        }
-
-        public async Task<Appointment> GetAppointmentByIdAsync(int appointmentId)
-        {
-            return await _context.Appointments.FindAsync(appointmentId);
-        }
-
-        public async Task AddAppointmentAsync(Appointment appointment)
-        {
-            _context.Appointments.Add(appointment);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateAppointmentAsync(Appointment appointment)
-        {
-            _context.Appointments.Update(appointment);
-            await _context.SaveChangesAsync();
+            var c = await context.Appointments.AddAsync(appointment);
+            await context.SaveChangesAsync();
+            return c.Entity.AppointmentId;
         }
     }
 }

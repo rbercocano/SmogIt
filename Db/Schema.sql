@@ -11,7 +11,7 @@ CREATE TABLE [dbo].[Appointments](
 	[VehicleId] [int] NOT NULL,
 	[StatusId] [int] NOT NULL,
 	[AppointmentDateTime] [datetime] NOT NULL,
-	[Notes] [text] NULL,
+	[Notes] VARCHAR(200) NULL,
  CONSTRAINT [PK__Appointm__8ECDFCA22B11A283] PRIMARY KEY CLUSTERED 
 (
 	[AppointmentId] ASC
@@ -59,7 +59,7 @@ GO
 CREATE TABLE [dbo].[Services](
 	[ServiceId] [int] IDENTITY(1,1) NOT NULL,
 	[ServiceName] [varchar](100) NOT NULL,
-	[Description] [text] NULL,
+	[Description] VARCHAR(200) NULL,
 	[Price] [decimal](10, 2) NOT NULL,
  CONSTRAINT [PK__Services__C51BB0EAA00645C2] PRIMARY KEY CLUSTERED 
 (
@@ -90,8 +90,9 @@ CREATE TABLE [dbo].[Users](
 	[UserId] [int] NOT NULL,
 	[FirstName] [varchar](50) NOT NULL,
 	[LastName] [varchar](50) NULL,
-	[Email] [varchar](100) NULL,
-	[Password] [varchar](255) NULL,
+	[Login] [varchar](50) NOT NULL,
+	[Email] [varchar](100) NOT NULL,
+	[Password] [varchar](255) NOT NULL,
 	[CreatedAt] [datetime] NULL,
 PRIMARY KEY CLUSTERED 
 (
@@ -137,11 +138,7 @@ GO
 SET ANSI_PADDING ON
 GO
 /****** Object:  Index [UQ__Users__A9D10534487DF870]    Script Date: 1/7/2024 7:14:58 PM ******/
-ALTER TABLE [dbo].[Users] ADD UNIQUE NONCLUSTERED 
-(
-	[Email] ASC
-)
-GO
+
 ALTER TABLE [dbo].[Clients] ADD  CONSTRAINT [DF__Clients__Registr__24927208]  DEFAULT (getdate()) FOR [RegistrationDate]
 GO
 ALTER TABLE [dbo].[Users] ADD  DEFAULT (getdate()) FOR [CreatedAt]

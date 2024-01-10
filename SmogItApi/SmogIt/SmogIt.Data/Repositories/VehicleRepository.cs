@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SmogIt.Core.Domains;
 using SmogIt.Data.Context;
 using SmogIt.Data.Contracts;
 using SmogIt.Models.Entities;
