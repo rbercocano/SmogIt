@@ -162,68 +162,22 @@ function Customer() {
 			return data;
 		}
 	};
-
-	const apptHeaderTemplate = () => (
-		<tr>
-			<Table.ColumnHeader
-				sortKey={"vehicle"}
-				title={"Vehicle"}
-				sortable={true}
-				onSort={handleApptSort}
-				currentSortKey={apptSort.sortBy}
-			/>
-			<Table.ColumnHeader
-				sortKey={"plate"}
-				title={"Plate"}
-				sortable={true}
-				onSort={handleApptSort}
-				currentSortKey={apptSort.sortBy}
-			/>
-			<Table.ColumnHeader
-				sortKey={"status"}
-				title={"Status"}
-				sortable={true}
-				onSort={handleApptSort}
-				currentSortKey={apptSort.sortBy}
-				align="center"
-			/>
-			<Table.ColumnHeader
-				sortKey={"date"}
-				title={"Date"}
-				sortable={true}
-				onSort={handleApptSort}
-				currentSortKey={apptSort.sortBy}
-			/>
-		</tr>
-	);
-	const apptRowTemplate = (rowData, index) => {
-		const { id, vehicle, status, date, plate } = rowData;
-		let variant = "default";
-		switch (status) {
-			case "Pending":
-				variant = "warning";
-				break;
-			case "Completed":
-				variant = "success";
-				break;
-			case "In Progress":
-				variant = "default";
-				break;
-			case "Cancelled":
-				variant = "error";
-				break;
-		}
-		return (
-			<tr key={id} className={index % 2 === 0 ? "odd" : null}>
-				<td>{vehicle}</td>
-				<td>{plate}</td>
-				<td className="text-center">
-					<Badge text={status} variant={variant} />
-				</td>
-				<td>{date}</td>
-			</tr>
-		);
-	};
+    const handleVehicleSort = async (sortBy, direction) => {
+        setVehicleSort({ sortBy: sortBy, direction: direction });
+        const data = await clientService.searchVehicles(id, vehiclePageSize, vehicleCurrentPage, sortBy, direction, vehicleSearchQuery);
+        setVehicles(data.items);
+    };
+    const handleVehicleTableChange = async (sortBy, direction, currentPage, pageSize, searchQuery) => {
+        setVehicleCurrentPage(currentPage);
+        setVehiclePageSize(pageSize);
+        setVehicleSearchQuery(searchQuery);
+        let id = getValues('clientId');
+        if (id) {
+            const data = await clientService.searchVehicles(id, pageSize, currentPage, sortBy, direction, searchQuery);
+            setVehicles(data.items);
+            return data;
+        }
+    };
 
 	const handleApptSort = (sortBy, direction) => {
 		setApptSort({ sortBy: sortBy, direction: direction });

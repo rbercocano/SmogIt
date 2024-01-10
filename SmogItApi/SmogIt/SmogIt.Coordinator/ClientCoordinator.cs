@@ -6,7 +6,7 @@ using SmogIt.Services.Contracts;
 
 namespace SmogIt.Coordinator
 {
-    public class ClientCoordinator(IClientService clientService, IVehicleService vehicleService) : IClientCoordinator
+    public class ClientCoordinator(IClientService clientService, IVehicleService vehicleService, IAppointmentService appointmentService) : IClientCoordinator
     {
 
         public async Task<PagedResult<ClientDetailsModel>> GetClientsAsync(int pageSize, int page, string? sortBy, string? direction, string? q)
@@ -24,9 +24,18 @@ namespace SmogIt.Coordinator
         {
             return await vehicleService.AddAsync(vehicle);
         }
-        public async Task<PagedResult<VehicleDetailsModel>> GeVehiclestByClientAsync(int clientId, int pageSize, int page, string sortBy, string direction, string q)
+        public async Task<PagedResult<VehicleDetailsModel>> GeVehiclesByClientAsync(int clientId, int pageSize, int page, string sortBy, string direction, string q)
         {
             return await vehicleService.GetByClientAsync(clientId, pageSize, page, sortBy, direction, q);
+        }
+
+        public async Task<int> AddAppointmentAsync(AppointmentModel vehicle)
+        {
+            return await appointmentService.AddAsync(vehicle);
+        }
+        public async Task<PagedResult<AppointmentDetailsModel>> GeAppointmentsByClientAsync(int clientId, int pageSize, int page, string sortBy, string direction, string q)
+        {
+            return await appointmentService.GetByClientAsync(clientId, pageSize, page, sortBy, direction, q);
         }
     }
 }

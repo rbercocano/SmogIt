@@ -30,8 +30,13 @@ builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 
-builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IAppointmentServiceService, AppointmentServiceService>();
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
+builder.Services.AddScoped<IStatusService, StatusService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IVehicleService, VehicleService>();
 
 builder.Services.AddScoped<IClientCoordinator, ClientCoordinator>();
 

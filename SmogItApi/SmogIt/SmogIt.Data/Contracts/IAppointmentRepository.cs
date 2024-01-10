@@ -1,12 +1,11 @@
-﻿using SmogIt.Models.Entities;
+﻿using SmogIt.Core.Domains;
+using SmogIt.Models.Entities;
 
 namespace SmogIt.Data.Contracts
 {
     public interface IAppointmentRepository
     {
-        Task<IEnumerable<Appointment>> GetAllAppointmentsAsync();
-        Task<Appointment> GetAppointmentByIdAsync(int appointmentId);
-        Task AddAppointmentAsync(Appointment appointment);
-        Task UpdateAppointmentAsync(Appointment appointment);
+        Task<int> AddAsync(Appointment appointment);
+        Task<PagedResult<Appointment>> GetByClientAsync(int clientId, int pageSize, int page, string sortBy = "AppointmentDateTime", string direction = "desc", string q = "");
     }
 }

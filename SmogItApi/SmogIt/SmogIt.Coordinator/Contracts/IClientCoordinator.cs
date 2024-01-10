@@ -13,8 +13,8 @@ namespace SmogIt.Coordinator.Contracts
         Task UpdateAsync(int id, ClientModel client);
 
         Task<int> AddVehicleAsync(VehicleModel vehicle);
-        Task<PagedResult<VehicleDetailsModel>> GeVehiclestByClientAsync(int clientId, int pageSize, int page, string sortBy, string direction, string q);
-
-
+        Task<PagedResult<VehicleDetailsModel>> GeVehiclesByClientAsync(int clientId, int pageSize, int page, string sortBy, string direction, string q);
+        Task<int> AddAppointmentAsync(AppointmentModel vehicle);
+        Task<PagedResult<AppointmentDetailsModel>> GeAppointmentsByClientAsync(int clientId, int pageSize, int page, string sortBy, string direction, string q);
     }
 }

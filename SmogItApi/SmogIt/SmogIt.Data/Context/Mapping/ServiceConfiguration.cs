@@ -12,8 +12,8 @@ namespace SmogIt.Data.Context.Mapping
             builder.HasKey(s => s.ServiceId);
             builder.Property(s => s.ServiceId).IsRequired();
             builder.Property(s => s.ServiceName).IsRequired();
-            builder.Property(s => s.Description).HasColumnType("text");
-            builder.Property(s => s.Price).IsRequired();
+            builder.Property(s => s.Description).HasColumnType("VARCHAR(200)");
+            builder.Property(s => s.Price).IsRequired().HasColumnType("DECIMAL(10,2)");
 
             builder.HasMany(s => s.AppointmentServices)
                 .WithOne(a => a.Service)
