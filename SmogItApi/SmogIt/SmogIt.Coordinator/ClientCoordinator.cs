@@ -1,7 +1,6 @@
 ﻿using SmogIt.Coordinator.Contracts;
 using SmogIt.Core.Domains;
 using SmogIt.Models.DTO;
-using SmogIt.Models.Entities;
 using SmogIt.Services.Contracts;
 
 namespace SmogIt.Coordinator

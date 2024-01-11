@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using SmogIt.Models.DTO;
-using SmogIt.Models.Entities;
 
 namespace SmogIt.Models.Profiles
 {
@@ -8,18 +7,17 @@ namespace SmogIt.Models.Profiles
     {
         public MappingProfile()
         {
-            CreateMap<ClientModel, Client>().ReverseMap();
-            CreateMap<ClientDetailsModel, Client>().ReverseMap();
+            CreateMap<ClientModel, Entities.Client>().ReverseMap();
+            CreateMap<ClientDetailsModel, Entities.Client>().ReverseMap();
 
-            CreateMap<Vehicle, VehicleModel>()
-                .ForMember(v => v.Make, x => x.MapFrom(y => y.VehicleMake))
-                .ForMember(v => v.Model, x => x.MapFrom(y => y.VehicleModel))
+            CreateMap<Entities.Vehicle, VehicleModel>()
                 .ReverseMap();
 
-            CreateMap<Vehicle, VehicleDetailsModel>()
-                .ForMember(v => v.Make, x => x.MapFrom(y => y.VehicleMake))
-                .ForMember(v => v.Model, x => x.MapFrom(y => y.VehicleModel))
-                .ReverseMap();
+            CreateMap<Entities.Vehicle, VehicleDetailsModel>()
+                .ForMember(m => m.Make, m => m.MapFrom(s => s.VehicleModel.VehicleMake.Make))
+                .ForMember(m => m.Model, m => m.MapFrom(s => s.VehicleModel.Model));
+
+
 
         }
     }
