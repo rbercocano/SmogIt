@@ -114,3 +114,10 @@ COPY src ./src/
 RUN npm install
 
 CMD ["npm", "run", "start:dev" ]
+
+# HOW TO DEPLOY
+# First need to build the image with the command bellow (NOTE: Command needs to be executed on directory where Dockerfile is located.)
+    # docker build -t smogit .
+
+# After Image be built, run command bellow
+    # docker run -d -p 3000:3000 --name smogit_web smogit 
