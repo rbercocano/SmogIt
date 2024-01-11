@@ -36,7 +36,9 @@ Button.table-btn {
 .modal {
     --bs-modal-margin: 100px;
 }
-
+.modal-content{
+    margin-top: 100px;
+}
 .modal-title {
     margin: 0;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
