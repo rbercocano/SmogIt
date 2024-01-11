@@ -63,3 +63,4 @@ ops/*.retry
 # IDE
 .idea/
 .vs/
+/SmogItApi/SmogIt/SmogIt.API/appsettings.Development.json
