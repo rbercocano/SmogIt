@@ -11,7 +11,7 @@ namespace SmogIt.Data.Context.Mapping
             builder.ToTable("Services");
             builder.HasKey(s => s.ServiceId);
             builder.Property(s => s.ServiceId).IsRequired();
-            builder.Property(s => s.ServiceName).IsRequired();
+            builder.Property(s => s.ServiceName).IsRequired().HasColumnType("VARCHAR(100)");
             builder.Property(s => s.Description).HasColumnType("VARCHAR(200)");
             builder.Property(s => s.Price).IsRequired().HasColumnType("DECIMAL(10,2)");
 

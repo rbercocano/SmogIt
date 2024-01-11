@@ -4,7 +4,6 @@ using SmogIt.Coordinator.Contracts;
 using SmogIt.Core.Domains;
 using SmogIt.Core.Services;
 using SmogIt.Models.DTO;
-using SmogIt.Models.Entities;
 
 namespace SmogIt.API.Controllers.v1
 {
