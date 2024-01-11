@@ -9,16 +9,27 @@ namespace SmogIt.Data.Repositories
     public class VehicleRepository(SmogItContext context) : IVehicleRepository
     {
 
-        public async Task<Core.Domains.PagedResult<Vehicle>> GetByClientAsync(int clientId, int pageSize, int page, string sortBy = "VehicleMake", string direction = "asc", string q = "")
+        public async Task<Core.Domains.PagedResult<Vehicle>> GetByClientAsync(int clientId, int pageSize, int page, string sortBy = "make", string direction = "asc", string q = "")
         {
-            var query = context.Vehicles.Where(v => v.ClientId == clientId);
+            var query = context.Vehicles
+                .Include(v => v.VehicleModel)
+                .ThenInclude(v => v.VehicleMake)
+                .Where(v => v.ClientId == clientId);
             if (!string.IsNullOrEmpty(q))
                 query = query.Where(c =>
-                    c.VehicleMake.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
-                    c.VehicleModel.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
-                    c.LicensePlate.Contains(q, StringComparison.CurrentCultureIgnoreCase));
+                    c.VehicleModel.VehicleMake.Make.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
+                    c.VehicleModel.Model.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
+                    c.LicensePlate.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
+                    c.Year.ToString().Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
+                    c.VIN.Contains(q, StringComparison.CurrentCultureIgnoreCase));
+            switch (sortBy.Trim())
+            {
+                case "": sortBy = "VehicleModel.VehicleMake.Make"; break;
+                case "make": sortBy = "VehicleModel.VehicleMake.Make"; break;
+                case "model": sortBy = "VehicleModel.Model"; break;
+                default: break;
+            }
 
-            sortBy = string.IsNullOrEmpty(sortBy) ? "VehicleMake" : sortBy;
             direction = direction?.ToLower() == "desc" ? "desc" : "asc";
             query = query.OrderBy($"{sortBy} {direction}");
             var count = await query.CountAsync();

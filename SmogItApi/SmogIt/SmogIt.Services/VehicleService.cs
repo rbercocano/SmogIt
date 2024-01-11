@@ -2,7 +2,7 @@
 using SmogIt.Data.Contracts;
 using SmogIt.Core.Domains;
 using SmogIt.Models.DTO;
-using SmogIt.Models.Entities;
+using Entities = SmogIt.Models.Entities;
 using SmogIt.Services.Contracts;
 using SmogIt.Core.Services;
 
@@ -12,7 +12,7 @@ namespace SmogIt.Services
     {
         public async Task<int> AddAsync(VehicleModel vehicle)
         {
-            var entity = mapper.Map<Vehicle>(vehicle);
+            var entity = mapper.Map<Entities.Vehicle>(vehicle);
             var id = await vehicleRepository.AddAsync(entity);
             return id;
         }

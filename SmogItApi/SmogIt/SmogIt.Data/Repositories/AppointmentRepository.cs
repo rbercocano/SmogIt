@@ -11,16 +11,18 @@ namespace SmogIt.Data.Repositories
         public async Task<Core.Domains.PagedResult<Appointment>> GetByClientAsync(int clientId, int pageSize, int page, string sortBy = "AppointmentDateTime", string direction = "desc", string q = "")
         {
             var query = context.Appointments
-                .Include(c => c.Vehicle)
                 .Include(c => c.Status)
                 .Include(c => c.AppointmentServices)
                 .ThenInclude(c => c.Service)
+                .Include(c => c.Vehicle)
+                .ThenInclude(v => v.VehicleModel)
+                .ThenInclude(v => v.VehicleMake)
                 .Where(v => v.Vehicle.ClientId == clientId);
             if (!string.IsNullOrEmpty(q))
                 query = query.Where(c =>
                     c.Status.StatusName.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
-                    c.Vehicle.VehicleMake.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
-                    c.Vehicle.VehicleModel.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
+                    c.Vehicle.VehicleModel.VehicleMake.Make.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
+                    c.Vehicle.VehicleModel.Model.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
                     c.Vehicle.LicensePlate.Contains(q, StringComparison.CurrentCultureIgnoreCase));
             sortBy = string.IsNullOrEmpty(sortBy) ? "AppointmentDateTime" : sortBy;
             direction = direction?.ToLower() == "desc" ? "desc" : "asc";

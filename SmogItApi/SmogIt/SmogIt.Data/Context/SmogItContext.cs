@@ -10,7 +10,7 @@ namespace SmogIt.Data.Context
     {
         public SmogItContext(DbContextOptions<SmogItContext> options) : base(options)
         {
-            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;            
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AppointmentService> AppointmentServices { get; set; }
@@ -30,6 +30,8 @@ namespace SmogIt.Data.Context
             modelBuilder.ApplyConfiguration(new StatusConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleConfiguration());
+            modelBuilder.ApplyConfiguration(new VehicleMakeConfiguration());
+            modelBuilder.ApplyConfiguration(new VehicleModelConfiguration());
         }
     }
 

@@ -55,15 +55,6 @@ namespace SmogIt.API.Controllers.v1
         [HttpGet("{clientId}/Vehicles/{pageSize:int}/{page:int}")]
         public async Task<ActionResult<ClientDetailsModel>> GetVehiclesByClientIdAsync(int clientId, int pageSize, int page, [FromQuery] string? sortBy, [FromQuery] string? direction, [FromQuery] string? q)
         {
-            switch (sortBy)
-            {
-                case "make":
-                    sortBy = "vehicleMake";break;
-                case "model":
-                    sortBy = "vehicleModel"; break;
-                default:
-                    break;
-            }
             var data = await clientCoordinator.GeVehiclesByClientAsync(clientId, pageSize, page, sortBy, direction, q);
             return Ok(data);
         }
@@ -77,15 +68,6 @@ namespace SmogIt.API.Controllers.v1
         [HttpGet("{clientId}/Appointments/{pageSize:int}/{page:int}")]
         public async Task<ActionResult<AppointmentDetailsModel>> GetAppointmentsByClientIdAsync(int clientId, int pageSize, int page, [FromQuery] string? sortBy, [FromQuery] string? direction, [FromQuery] string? q)
         {
-            switch (sortBy)
-            {
-                case "make":
-                    sortBy = "vehicleMake"; break;
-                case "model":
-                    sortBy = "vehicleModel"; break;
-                default:
-                    break;
-            }
             var data = await clientCoordinator.GeVehiclesByClientAsync(clientId, pageSize, page, sortBy, direction, q);
             return Ok(data);
         }
