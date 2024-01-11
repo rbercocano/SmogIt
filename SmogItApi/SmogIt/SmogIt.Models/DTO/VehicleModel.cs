@@ -6,5 +6,7 @@
         public string Make { get; set; }
         public string Model { get; set; }
         public string LicensePlate { get; set; }
+        public string VIN { get; set; }
+        public short Year { get; set; }
     }
 }

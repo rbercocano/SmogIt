@@ -43,9 +43,8 @@ function Customer() {
 			email: "",
 		},
 	});
-	const { handleSubmit, setValue, control, setError, clearErrors, getValues } =
-		form;
-	useEffect(async () => {
+	const { handleSubmit, setValue, control, setError, clearErrors, getValues } = form;
+	useEffect(() => {
 		if (id) {
 			clientService.get(id).then((result) => {
 				const { firstName, lastName, phone, email } = result;
@@ -142,6 +141,9 @@ function Customer() {
 			setVehicles(data.items);
 			return data;
 		}
+	};
+	const handleVehicleSave = (v) => {
+		setVehicleModalOpen(false);
 	};
 	const handleOpenVehicleModal = () => {
 		setVehicleModalOpen(true);
@@ -265,7 +267,7 @@ function Customer() {
 					/>
 				</div>
 			</div>
-			<NewVehicleModal opened={vehicleModalOpen} onCancel={handleCloseVehicleModal} />
+			{id && <NewVehicleModal opened={vehicleModalOpen} onCancel={handleCloseVehicleModal} clientId={id} onSave={handleVehicleSave} />}
 		</>
 	);
 }
