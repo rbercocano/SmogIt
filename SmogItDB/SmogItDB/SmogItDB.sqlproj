@@ -70,12 +70,23 @@
     <Build Include="dbo\Tables\Clients.sql" />
     <Build Include="dbo\Tables\AppointmentServices.sql" />
     <Build Include="dbo\Tables\Appointments.sql" />
+    <Build Include="dbo\Tables\VehicleMake.sql" />
+    <Build Include="dbo\Tables\VehicleModel.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Miscellaneous\SqlSchemaCompare.scmp" />
   </ItemGroup>
   <ItemGroup>
-    <PostDeploy Include="Miscellaneous\Status.PostDeployment.sql" />
+    <PostDeploy Include="Miscellaneous\Script.PostDeployment.sql" />
+    <None Include="Miscellaneous\Init.MakeModel.sql">
+      <CopyToOutputDirectory>DoNotCopy</CopyToOutputDirectory>
+    </None>
+    <None Include="Miscellaneous\Init.Status.sql">
+      <CopyToOutputDirectory>DoNotCopy</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="SmogItDB.refactorlog" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

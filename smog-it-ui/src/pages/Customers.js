@@ -44,12 +44,12 @@ function Customers() {
             </tr >
         );
     }, []);
-    const handleSort = useCallback(async(sortBy, direction) => {
-        setSort({ sortBy: sortBy, direction: direction });        
+    const handleSort = useCallback(async (sortBy, direction) => {
+        setSort({ sortBy: sortBy, direction: direction });
         const data = await clientService.search(pageSize, currentPage, sortBy, direction, searchQuery);
         setData(data);
     }, []);
-    const handleTableChange = useCallback(async(sortBy, direction, currentPage, pageSize, searchQuery) => {
+    const handleTableChange = useCallback(async (sortBy, direction, currentPage, pageSize, searchQuery) => {
         setCurrentPage(currentPage);
         setPageSize(pageSize);
         setSearchQuery(searchQuery);

@@ -15,6 +15,8 @@ namespace SmogIt.Data.Context.Mapping
             builder.Property(v => v.VehicleMake).IsRequired();
             builder.Property(v => v.VehicleModel).IsRequired();
             builder.Property(v => v.LicensePlate);
+            builder.Property(v => v.VIN);
+            builder.Property(v => v.Year);
             builder.HasMany(v => v.Appointments)
                 .WithOne(a => a.Vehicle)
                 .HasForeignKey(a => a.VehicleId);

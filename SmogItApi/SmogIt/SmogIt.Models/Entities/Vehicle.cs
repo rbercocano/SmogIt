@@ -13,6 +13,8 @@ namespace SmogIt.Models.Entities
         public string VehicleMake { get; set; }
         public string VehicleModel { get; set; }
         public string LicensePlate { get; set; }
+        public string VIN { get; set; }
+        public short Year { get; set; }
 
         // Navigation properties
         public Client Client { get; set; }
