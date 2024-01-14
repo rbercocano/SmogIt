@@ -16,12 +16,15 @@ namespace SmogIt.Data.Repositories
                 .ThenInclude(v => v.VehicleMake)
                 .Where(v => v.ClientId == clientId);
             if (!string.IsNullOrEmpty(q))
+            {
+                q = q.ToLower();
                 query = query.Where(c =>
-                    c.VehicleModel.VehicleMake.Make.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
-                    c.VehicleModel.Model.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
-                    c.LicensePlate.Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
-                    c.Year.ToString().Contains(q, StringComparison.CurrentCultureIgnoreCase) ||
-                    c.VIN.Contains(q, StringComparison.CurrentCultureIgnoreCase));
+                    c.VehicleModel.VehicleMake.Make.ToLower().Contains(q) ||
+                    c.VehicleModel.Model.ToLower().Contains(q) ||
+                    c.LicensePlate.ToLower().Contains(q) ||
+                    c.Year.ToString().ToLower().Contains(q) ||
+                    c.VIN.ToLower().Contains(q));
+            }
             switch (sortBy.Trim())
             {
                 case "": sortBy = "VehicleModel.VehicleMake.Make"; break;

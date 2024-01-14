@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from "@mui/material/Button";
 import clientService from "../../services/ClientService";
+import VehicleService from "../../services/VehicleService";
 import { useForm } from "react-hook-form";
 import { FormInputText } from "../FormInputs/FormInputText";
+import { FormInputSelect } from "../FormInputs/FormInputSelect";
 import * as Yup from "yup";
+import vehicleService from '../../services/VehicleService';
 NewVehicleModal.defaultProps = {
     opened: false,
     onCancel: () => { },
@@ -12,36 +15,57 @@ NewVehicleModal.defaultProps = {
 };
 function NewVehicleModal({ clientId, opened, onCancel, onSave }) {
     const validationSchema = Yup.object({
-        make: Yup.string().required("Required field"),
-        model: Yup.string().required("Required field")
+        make: Yup.number().min(1, 'Select a Make'),
+        model: Yup.number().min(1, 'Select a Model'),
+        year: Yup.string().test('year', 'Must be between 1923 and the current year', (year) => {
+            if (year && (year < 1923 || year > new Date().getFullYear()))
+                return false;
+            return true;
+        })
     });
     const [show, setShow] = useState(false);
+    const [makes, setMakes] = useState([{ value: 0, text: 'Select one' }]);
+    const [models, setModels] = useState([{ value: 0, text: 'Select one' }]);
     const form = useForm({
         defaultValues: {
             id: '',
             clientId: clientId,
-            make: "",
-            model: "",
-            licensePlate: ""
+            make: 0,
+            model: 0,
+            licensePlate: '',
+            year: '',
+            vin: ''
         },
     });
-    const { handleSubmit, setValue, control, setError, clearErrors, getValues } = form;
+    const { handleSubmit, setValue, control, setError, clearErrors, getValues, reset } = form;
 
     useEffect(() => {
         setShow(opened);
+        if (opened) {
+            form.reset();
+            setMakes([{ value: 0, text: 'Select one' }]);
+            setModels([{ value: 0, text: 'Select one' }]);
+            vehicleService.getAllMakes().then((r) => {
+                let m = r.map(v => {
+                    return { value: v.makeId, text: v.make }
+                });
+                setMakes([...makes, ...m]);
+            });
+        }
     }, [opened]);
     const handleCancel = () => {
         setShow(false);
         onCancel();
-    }
+    };
     const save = (data) => {
         try {
             validationSchema.validateSync(data, { abortEarly: false });
             clearErrors();
-            clientService.addVehicle(data).then((r) => {
+            let req = { clientId: data.clientId, modelId: data.model, licensePlate: data.licensePlate, vIN: data.vin, year: data.year };
+            clientService.addVehicle(req).then((r) => {
                 setValue("vehicleId", r);
                 if (onSave)
-                    onSave({ ...data, vehicleId: r });
+                    onSave({ ...req, vehicleId: r });
             });
 
         } catch (e) {
@@ -52,6 +76,17 @@ function NewVehicleModal({ clientId, opened, onCancel, onSave }) {
                 });
             });
         }
+    };
+    const handleMakeChange = (e) => {
+        let id = e.target.value;
+        if (!id) return;
+        vehicleService.getAllModels(e.target.value).then((r) => {
+            let m = (r ?? []).map(v => {
+                return { value: v.modelId, text: v.model }
+            });
+            form.setValue('model', 0);
+            setModels([...models, ...m]);
+        });
     }
     return (
         <Modal show={show} onHide={handleCancel} size="lg">
@@ -64,24 +99,39 @@ function NewVehicleModal({ clientId, opened, onCancel, onSave }) {
                 <Modal.Body>
                     <div className="row">
                         <div className="col-6 mb-3">
-                            <FormInputText
-                                name={"make"}
+                            <FormInputSelect name={"make"}
                                 control={control}
                                 label={"Make"}
+                                items={makes}
+                                onSelectItem={handleMakeChange}
                             />
                         </div>
                         <div className="col-6 mb-3">
-                            <FormInputText
-                                name={"model"}
+                            <FormInputSelect name={"model"}
                                 control={control}
                                 label={"Model"}
+                                items={models}
                             />
                         </div>
-                        <div className="col-6 mb-3">
+                        <div className="col-3 mb-3">
+                            <FormInputText
+                                name={"year"}
+                                control={control}
+                                label={"Year"}
+                            />
+                        </div>
+                        <div className="col-3 mb-3">
                             <FormInputText
                                 name={"licensePlate"}
                                 control={control}
                                 label={"License Plate"}
+                            />
+                        </div>
+                        <div className="col-6 mb-3">
+                            <FormInputText
+                                name={"vin"}
+                                control={control}
+                                label={"VIN"}
                             />
                         </div>
                     </div>

@@ -4,6 +4,7 @@ using SmogIt.Coordinator.Contracts;
 using SmogIt.Core.Domains;
 using SmogIt.Core.Services;
 using SmogIt.Models.DTO;
+using SmogIt.Services.Contracts;
 
 namespace SmogIt.API.Controllers.v1
 {
@@ -12,7 +13,6 @@ namespace SmogIt.API.Controllers.v1
     [ApiController]
     public class ClientController(IClientCoordinator clientCoordinator, NotificationService notificationService) : ControllerBase
     {
-        private readonly IClientCoordinator clientCoordinator = clientCoordinator;
 
         [HttpGet("{pageSize:int}/{page:int}")]
         public async Task<ActionResult<PagedResult<ClientModel>>> GetClientsAsync(int pageSize, int page, [FromQuery] string? sortBy, [FromQuery] string? direction, [FromQuery] string? q)
@@ -68,7 +68,7 @@ namespace SmogIt.API.Controllers.v1
         [HttpGet("{clientId}/Appointments/{pageSize:int}/{page:int}")]
         public async Task<ActionResult<AppointmentDetailsModel>> GetAppointmentsByClientIdAsync(int clientId, int pageSize, int page, [FromQuery] string? sortBy, [FromQuery] string? direction, [FromQuery] string? q)
         {
-            var data = await clientCoordinator.GeVehiclesByClientAsync(clientId, pageSize, page, sortBy, direction, q);
+            var data = await clientCoordinator.GeAppointmentsByClientAsync(clientId, pageSize, page, sortBy, direction, q);
             return Ok(data);
         }
     }

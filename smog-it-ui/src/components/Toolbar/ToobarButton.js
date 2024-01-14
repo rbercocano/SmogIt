@@ -1,12 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button as MuiButton, Tooltip } from "@mui/material";
-Button.defaultProperties = {
-    onClick: () => { }
+Button.defaultProps = {
+    onClick: () => { },
+    type: 'button'
 };
-function Button({ faIcon, toolTipText, onClick }) {
+function Button({ faIcon, toolTipText, onClick, type }) {
     return (
         <Tooltip title={toolTipText}>
-            <MuiButton size="smll" variant="contained" onClick={onClick}>
+            <MuiButton size="smll" variant="contained" onClick={onClick} type={type}>
                 <FontAwesomeIcon icon={faIcon}></FontAwesomeIcon>
             </MuiButton>
         </Tooltip>

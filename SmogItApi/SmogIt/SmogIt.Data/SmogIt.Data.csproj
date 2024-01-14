@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Repositories\VehicleMadeRepository.cs~RF7ed5ca9.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\SmogIt.Core\SmogIt.Core.csproj" />
     <ProjectReference Include="..\SmogIt.Models\SmogIt.Models.csproj" />
   </ItemGroup>

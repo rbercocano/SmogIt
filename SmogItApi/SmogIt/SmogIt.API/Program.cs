@@ -29,6 +29,8 @@ builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<IVehicleMakeRepository, VehicleMakeRepository>();
+builder.Services.AddScoped<IVehicleModelRepository, VehicleModelRepository>();
 
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IAppointmentServiceService, AppointmentServiceService>();
@@ -37,8 +39,13 @@ builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IVehicleMakeService, VehicleMakeService>();
+builder.Services.AddScoped<IVehicleModelService, VehicleModelService>();
 
 builder.Services.AddScoped<IClientCoordinator, ClientCoordinator>();
+builder.Services.AddScoped<IVehicleCoordinator, VehicleCoordinator>();
+builder.Services.AddScoped<IStatusCoordinator, StatusCoordinator>();
+builder.Services.AddScoped<IServiceCoordinator, ServiceCoordinator>();
 
 builder.Services.AddScoped<NotificationService>();
 

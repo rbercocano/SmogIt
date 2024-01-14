@@ -1,7 +1,9 @@
-﻿namespace SmogIt.Data.Contracts
+﻿using SmogIt.Models.Entities;
+
+namespace SmogIt.Data.Contracts
 {
     public interface IServiceRepository
     {
-        // Similar CRUD operations for Service entity
+        Task<List<Service>> GetAllAsync();
     }
 }

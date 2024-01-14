@@ -1,22 +1,15 @@
-﻿using SmogIt.Data.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using SmogIt.Data.Context;
 using SmogIt.Data.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SmogIt.Models.Entities;
 
 namespace SmogIt.Data.Repositories
 {
-    public class StatusRepository : IStatusRepository
+    public class StatusRepository(SmogItContext context) : IStatusRepository
     {
-        private readonly SmogItContext _context;
-
-        public StatusRepository(SmogItContext context)
+        public async Task<List<Status>> GetAllAsync()
         {
-            _context = context;
+            return await context.Statuses.ToListAsync();
         }
-
-        // Similar CRUD operations for Status entity (asynchronous)
     }
 }

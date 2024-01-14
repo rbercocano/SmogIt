@@ -1,0 +1,75 @@
+table.scrollable {
+    border-collapse: collapse;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    margin: 20px 0;
+    font-size: 14px;
+    overflow-x: auto;
+}
+
+table.scrollable th,
+table.scrollable td {
+    text-align: left;
+}
+
+table.scrollable th {
+    position: sticky;
+    top: 0;
+    flex: 1;
+}
+
+table.scrollable tbody {
+    display: block;
+    overflow-y: auto;
+}
+
+table.scrollable tr {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+table.scrollable td {
+    flex: 1;
+}
+
+@media screen and (max-width: 600px) {
+
+    table.scrollable table,
+    table.scrollable thead,
+    table.scrollable tbody,
+    table.scrollable th,
+    table.scrollable td,
+    table.scrollable tr {
+        display: block;
+    }
+
+    table.scrollable thead {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    table.scrollable tr {
+        border: 1px solid #ccc;
+    }
+
+    table.scrollable td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+        box-sizing: border-box;
+    }
+
+    table.scrollable td:before {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        box-sizing: border-box;
+    }
+}

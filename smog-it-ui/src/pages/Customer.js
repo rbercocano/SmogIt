@@ -1,11 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Table from "../components/Table/Table";
 import Title from "../components/Title/Title";
+import Moment from 'moment';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
+import { Tooltip, Button } from "@mui/material";
 import * as Yup from "yup";
-import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faPlus } from "@fortawesome/free-solid-svg-icons";
 import Badge from "../components/Badge/Badge";
 import Toolbar from "../components/Toolbar/Toolbar";
 import clientService from "../services/ClientService";
@@ -13,6 +14,7 @@ import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FormInputText } from "../components/FormInputs/FormInputText";
 import NewVehicleModal from "../components/NewVehicleModal/NewVehicleModal";
+import AppointmentModal from "../components/AppointmentModal/AppointmentModal";
 const validationSchema = Yup.object({
 	firstName: Yup.string().required("Required field"),
 	lastName: Yup.string().required("Required field"),
@@ -22,18 +24,19 @@ const validationSchema = Yup.object({
 function Customer() {
 	const navigate = useNavigate();
 	const { id } = useParams();
-	const [vehicleSort, setVehicleSort] = useState({
-		sortBy: "make",
-		direction: "asc",
-	});
+	const [vehicleSort, setVehicleSort] = useState({ sortBy: "make", direction: "asc" });
 	const [vehicles, setVehicles] = useState([]);
 	const [vehicleModalOpen, setVehicleModalOpen] = useState(false);
 	const [vehicleCurrentPage, setVehicleCurrentPage] = useState(1);
 	const [vehiclePageSize, setVehiclePageSize] = useState(10);
 	const [vehicleSearchQuery, setVehicleSearchQuery] = useState("");
-
-	const [apptSort, setApptSort] = useState({ sortBy: "", direction: "" });
+	const [selectedVehicle, setSelectedVehicle] = useState();
+	const [apptSort, setApptSort] = useState({ sortBy: "make", direction: "asc" });
+	const [apptCurrentPage, setApptCurrentPage] = useState(1);
+	const [apptPageSize, setApptPageSize] = useState(10);
+	const [apptSearchQuery, setApptSearchQuery] = useState("");
 	const [appointments, setAppointments] = useState([]);
+	const [apptModalOpen, setApptModalOpen] = useState(true);
 	const form = useForm({
 		defaultValues: {
 			clientId: id,
@@ -77,51 +80,49 @@ function Customer() {
 			});
 		}
 	};
-	const deleteVehicle = (vehicle) => { };
 	const vehicleHeaderTemplate = () => (
 		<tr>
 			<Table.ColumnHeader
-				sortKey={"make"}
-				title={"Make"}
+				sortKey={"year"}
+				title={"Vehicle"}
 				sortable={true}
 				onSort={handleVehicleSort}
 				currentSortKey={vehicleSort.sortBy}
 			/>
 			<Table.ColumnHeader
-				sortKey={"model"}
-				title={"Model"}
-				sortable={true}
-				onSort={handleVehicleSort}
-				currentSortKey={vehicleSort.sortBy}
-			/>
-			<Table.ColumnHeader
-				sortKey={"plate"}
+				sortKey={"licensePlate"}
 				title={"Plate"}
 				sortable={true}
 				onSort={handleVehicleSort}
 				currentSortKey={vehicleSort.sortBy}
 			/>
-			<Table.ColumnHeader sortable={false} />
+			<Table.ColumnHeader
+				sortKey={"vin"}
+				title={"VIN"}
+				sortable={true}
+				onSort={handleVehicleSort}
+				currentSortKey={vehicleSort.sortBy}
+			/>
 		</tr>
 	);
+	const selectVehicleForAppt = (v) => {
+		setSelectedVehicle({ vehicleId: v.vehicleId, make: v.make, model: v.model, licensePlate: v.licensePlate, year: v.year, vin: v.vin });
+		setApptModalOpen(true);
+	};
 	const vehicleRowTemplate = (rowData, index) => {
-		const { id, make, model, plate } = rowData;
+		const { vehicleId, make, model, licensePlate, year, vin } = rowData;
 		return (
-			<tr key={id} className={index % 2 === 0 ? "odd" : null}>
-				<td>{make}</td>
-				<td>{model}</td>
-				<td>{plate}</td>
-				<td width={20}>
-					<Button
-						variant="contained"
-						className="table-btn"
-						color="error"
-						onClick={() => {
-							deleteVehicle(rowData);
-						}}
-					>
-						<FontAwesomeIcon icon={faTrash} />
-					</Button>
+			<tr key={vehicleId} className={index % 2 === 0 ? "odd" : null}>
+				<td>{year} {make} {model}</td>
+				<td>{licensePlate}</td>
+				<td>{vin}</td>
+				<td width={30}>
+					<Tooltip title='Add Appointment'>
+						<Button variant="contained" className='table-btn' onClick={() => selectVehicleForAppt(rowData)} >
+							<FontAwesomeIcon icon={faCalendar} />
+						</Button>
+					</Tooltip>
+
 				</td>
 			</tr>
 		);
@@ -142,7 +143,15 @@ function Customer() {
 			return data;
 		}
 	};
-	const handleVehicleSave = (v) => {
+	const handleVehicleSave = async (v) => {
+		setVehicleModalOpen(false);
+		setVehicleCurrentPage(1);
+		let id = getValues('clientId');
+		if (id) {
+			const data = await clientService.searchVehicles(id, vehiclePageSize, vehicleCurrentPage, vehicleSort.sortBy, vehicleSort.direction, vehicleSearchQuery);
+			setVehicles(data.items);
+			return data;
+		}
 		setVehicleModalOpen(false);
 	};
 	const handleOpenVehicleModal = () => {
@@ -151,17 +160,30 @@ function Customer() {
 	const handleCloseVehicleModal = () => {
 		setVehicleModalOpen(false);
 	};
+	const handleCloseApptModal = () => {
+		setApptModalOpen(false);
+	};
+	const handleApptSave = async (v) => {
+		setApptModalOpen(false);
+		setApptCurrentPage(1);
+		let id = getValues('clientId');
+		if (id) {
+			const data = await clientService.searchAppointment(id, vehiclePageSize, vehicleCurrentPage, vehicleSort.sortBy, vehicleSort.direction, vehicleSearchQuery);
+			setAppointments(data.items);
+			return data;
+		}
+		setVehicleModalOpen(false);
+	};
 
 	const apptHeaderTemplate = () => (
 		<tr>
-			<Table.ColumnHeader sortKey={'vehicle'} title={'Vehicle'} sortable={true} onSort={handleApptSort} currentSortKey={apptSort.sortBy} />
-			<Table.ColumnHeader sortKey={'plate'} title={'Plate'} sortable={true} onSort={handleApptSort} currentSortKey={apptSort.sortBy} />
+			<Table.ColumnHeader sortKey={'year'} title={'Vehicle'} sortable={true} onSort={handleApptSort} currentSortKey={apptSort.sortBy} />
 			<Table.ColumnHeader sortKey={'status'} title={'Status'} sortable={true} onSort={handleApptSort} currentSortKey={apptSort.sortBy} align='center' />
-			<Table.ColumnHeader sortKey={'date'} title={'Date'} sortable={true} onSort={handleApptSort} currentSortKey={apptSort.sortBy} />
+			<Table.ColumnHeader sortKey={'appointmentDateTime'} title={'Date'} sortable={true} onSort={handleApptSort} currentSortKey={apptSort.sortBy} />
 		</tr>
 	);
 	const apptRowTemplate = (rowData, index) => {
-		const { id, vehicle, status, date, plate } = rowData;
+		const { id, year, status, make, model, licensePlate, appointmentDateTime } = rowData;
 		let variant = 'default';
 		switch (status) {
 			case 'Pending': variant = 'warning'; break;
@@ -171,23 +193,34 @@ function Customer() {
 		}
 		return (
 			<tr key={id} className={index % 2 === 0 ? 'odd' : null}>
-				<td>{vehicle}</td>
-				<td>{plate}</td>
+				<td>{`${year} ${make} ${model} ${licensePlate}`}</td>
 				<td className='text-center'><Badge text={status} variant={variant} /></td>
-				<td>{date}</td>
+				<td>{Moment(appointmentDateTime).format('MM/DD/YYYY hh:mm')}</td>
 			</tr >
 		);
 	};
-	const handleApptSort = (sortBy, direction) => {
+	const handleApptSort = async (sortBy, direction) => {
 		setApptSort({ sortBy: sortBy, direction: direction });
+		const data = await clientService.searchAppointment(id, apptPageSize, apptCurrentPage, sortBy, direction, apptSearchQuery);
+		setAppointments(data.items);
 	};
-	const handleApptTableChange = (
+	const handleApptTableChange = async (
 		sortBy,
 		direction,
 		currentPage,
 		pageSize,
 		searchQuery
-	) => { };
+	) => {
+		setApptCurrentPage(currentPage);
+		setApptPageSize(pageSize);
+		setApptSearchQuery(searchQuery);
+		let id = getValues('clientId');
+		if (id) {
+			const data = await clientService.searchAppointment(id, pageSize, currentPage, sortBy, direction, searchQuery);
+			setAppointments(data.items);
+			return data;
+		}
+	};
 
 	return (
 		<>
@@ -251,11 +284,6 @@ function Customer() {
 			<div className="app-container-wrapper col-6 ">
 				<div className="app-container">
 					<Title title="Appointments">
-						<Toolbar>
-							<Toolbar.Button
-								faIcon={faPlus} toolTipText="Add Appointment"
-							></Toolbar.Button>
-						</Toolbar>
 					</Title>
 					<Table
 						data={appointments}
@@ -268,6 +296,7 @@ function Customer() {
 				</div>
 			</div>
 			{id && <NewVehicleModal opened={vehicleModalOpen} onCancel={handleCloseVehicleModal} clientId={id} onSave={handleVehicleSave} />}
+			{id && selectedVehicle && <AppointmentModal opened={apptModalOpen} onCancel={handleCloseApptModal} clientId={id} onSave={handleApptSave} vehicleDetails={selectedVehicle} />}
 		</>
 	);
 }
