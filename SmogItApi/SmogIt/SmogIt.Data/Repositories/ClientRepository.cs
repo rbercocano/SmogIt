@@ -12,10 +12,13 @@ namespace SmogIt.Data.Repositories
         {
             var query = context.Clients.AsQueryable();
             if (!string.IsNullOrEmpty(q))
+            {
+                q = q.ToLower();
                 query = query.Where(c =>
-                    c.FirstName.ToLower().Contains(q.ToLower()) ||
-                    c.LastName.ToLower().Contains(q.ToLower()) ||
-                    c.Email.ToLower().Contains(q.ToLower()));
+                    c.FirstName.ToLower().Contains(q) ||
+                    c.LastName.ToLower().Contains(q) ||
+                    c.Email.ToLower().Contains(q));
+            }
 
             sortBy = string.IsNullOrEmpty(sortBy) ? "FirstName" : sortBy;
             direction = direction?.ToLower() == "desc" ? "desc" : "asc";

@@ -5,6 +5,7 @@ using SmogIt.Models.Entities;
 namespace SmogIt.Services.Contracts
 {
     public interface IStatusService
-    {   
+    {
+        Task<List<StatusModel>> GetAllAsync();
     }
 }

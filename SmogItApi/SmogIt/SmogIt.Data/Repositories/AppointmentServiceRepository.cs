@@ -1,17 +1,15 @@
 ﻿using SmogIt.Data.Context;
 using SmogIt.Data.Contracts;
+using SmogIt.Models.Entities;
 
 namespace SmogIt.Data.Repositories
 {
-    public class AppointmentServiceRepository : IAppointmentServiceRepository
+    public class AppointmentServiceRepository(SmogItContext context) : IAppointmentServiceRepository
     {
-        private readonly SmogItContext _context;
-
-        public AppointmentServiceRepository(SmogItContext context)
+        public async Task AddAync(AppointmentService appointment)
         {
-            _context = context;
+            await context.AppointmentServices.AddAsync(appointment);
+            await context.SaveChangesAsync();
         }
-
-        // Similar CRUD operations for AppointmentService entity (asynchronous)
     }
 }

@@ -2,6 +2,8 @@
 {
     public class AppointmentServiceDetailsModel
     {
+        public int AppointmentServiceId { get; set; }
+        public int AppointmentId { get; set; }
         public int ServiceId { get; set; }
         public string ServiceName { get; set; }
         public string Description { get; set; }

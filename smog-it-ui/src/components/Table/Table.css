@@ -1,15 +1,15 @@
-table {
+table.paginated {
     display: table;
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
 }
 
-table>thead {
+table.paginated>thead {
     display: table-header-group;
 }
 
-table>thead>tr {
+table.paginated>thead>tr {
     color: inherit;
     display: table-row;
     vertical-align: middle;
@@ -36,8 +36,13 @@ table>thead>tr>th>span.sortable {
     display: block;
 }
 
-table>tbody {
+table.paginated>tbody {
     display: table-row-group;
+}
+
+table.paginated.scrollable>tbody {
+    display: block;
+    overflow-y: auto;
 }
 
 table>tbody>tr {

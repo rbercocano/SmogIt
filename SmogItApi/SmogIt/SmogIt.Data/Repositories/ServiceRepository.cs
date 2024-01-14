@@ -1,17 +1,15 @@
-﻿using SmogIt.Data.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using SmogIt.Data.Context;
 using SmogIt.Data.Contracts;
+using SmogIt.Models.Entities;
 
 namespace SmogIt.Data.Repositories
 {
-    public class ServiceRepository : IServiceRepository
+    public class ServiceRepository(SmogItContext context) : IServiceRepository
     {
-        private readonly SmogItContext _context;
-
-        public ServiceRepository(SmogItContext context)
+        public async Task<List<Service>> GetAllAsync()
         {
-            _context = context;
+            return await context.Services.ToListAsync();
         }
-
-        // Similar CRUD operations for Service entity (asynchronous)
     }
 }

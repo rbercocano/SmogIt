@@ -1,6 +1,6 @@
 import { Controller } from "react-hook-form";
 import TextField from "@mui/material/TextField";
-export const FormInputText = ({ name, control, label }) => {
+export const FormInputText = ({ name, control, label, multiline, rows, disabled }) => {
     return (
         <Controller
             name={name}
@@ -19,8 +19,17 @@ export const FormInputText = ({ name, control, label }) => {
                     fullWidth
                     label={label}
                     variant="outlined"
+                    multiline={multiline}
+                    minRows={rows}
+                    disabled={disabled}
                 />
             )}
         />
     );
+};
+
+FormInputText.defaultProps = {
+    multiline: false,
+    rows: 1,
+    disabled: false
 };

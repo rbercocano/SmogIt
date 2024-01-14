@@ -1,0 +1,45 @@
+div.service-item {
+    border-radius: 8px;
+    border: 1px solid #3498db;
+    background-color: #1976d2;
+    color: #fff;
+    padding: 5px 10px;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+div.service-item span {
+    float: right;
+}
+
+div.service-item p {
+    margin-bottom: 0;
+    font-size: 12px;
+}
+
+table.items {
+    width: 100%;
+}
+
+table.items tr:not(:last-child) td {
+    border: none;
+}
+
+table.items td:nth-child(2) {
+    text-align: right;
+}
+
+table.items tfoot tr td {
+    text-align: left;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.43;
+    letter-spacing: 0.01071em;
+    display: table-cell;
+    vertical-align: inherit;
+    padding: 6px 16px;
+    color: rgba(0, 0, 0, 0.87);
+}
+table.items tfoot tr td:last-child{
+    text-align: right;
+}

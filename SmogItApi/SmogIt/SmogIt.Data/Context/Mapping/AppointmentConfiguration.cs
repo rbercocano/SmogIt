@@ -13,8 +13,8 @@ namespace SmogIt.Data.Context.Mapping
             builder.Property(a => a.AppointmentId).IsRequired();
             builder.Property(a => a.VehicleId).IsRequired();
             builder.Property(a => a.StatusId).IsRequired();
-            builder.Property(a => a.AppointmentDateTime).IsRequired();
-            builder.Property(a => a.Notes).HasColumnType("VARCHAR(200)");
+            builder.Property(a => a.AppointmentDateTime).HasDefaultValueSql("GETDATE()");
+            builder.Property(a => a.Notes).HasColumnType("VARCHAR(200)").IsRequired(false);
 
             builder.HasOne(a => a.Vehicle)
                 .WithMany(v => v.Appointments)
@@ -26,7 +26,7 @@ namespace SmogIt.Data.Context.Mapping
 
             builder.HasMany(a => a.AppointmentServices)
                 .WithOne(a => a.Appointment)
-                .HasForeignKey(a => a.AppointmentID);
+                .HasForeignKey(a => a.AppointmentId);
         }
     }
 }

@@ -81,7 +81,7 @@ function Table({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, he
                     onChange={onSearchChange}
                 />
             </div>
-            <table>
+            <table className='paginated'>
                 <thead>
                     {headerTemplate()}
                 </thead>
