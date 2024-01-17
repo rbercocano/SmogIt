@@ -7,5 +7,6 @@ namespace SmogIt.Data.Contracts
     {
         Task<int> AddAsync(Appointment appointment);
         Task<PagedResult<Appointment>> GetByClientAsync(int clientId, int pageSize, int page, string sortBy = "AppointmentDateTime", string direction = "desc", string q = "");
+        Task<PagedResult<Appointment>> SearchAsync(int pageSize, int page, string sortBy = "AppointmentDateTime", string direction = "desc", string q = "");
     }
 }

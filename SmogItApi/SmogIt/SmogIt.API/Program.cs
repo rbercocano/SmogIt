@@ -46,6 +46,7 @@ builder.Services.AddScoped<IClientCoordinator, ClientCoordinator>();
 builder.Services.AddScoped<IVehicleCoordinator, VehicleCoordinator>();
 builder.Services.AddScoped<IStatusCoordinator, StatusCoordinator>();
 builder.Services.AddScoped<IServiceCoordinator, ServiceCoordinator>();
+builder.Services.AddScoped<IAppointmentCoordinator, AppointmentCoordinator>();
 
 builder.Services.AddScoped<NotificationService>();
 

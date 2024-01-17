@@ -1,13 +1,13 @@
-import Title from '../components/Title/Title';
-import Table from '../components/Table/Table';
-import clientService from '../services/ClientService';
+import Title from '../../components/Title/Title';
+import Table from '../../components/Table/Table';
+import clientService from '../../services/ClientService';
 import Button from '@mui/material/Button';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCallback, useState } from 'react';
 import { faPencil } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { OverlayLoadingContext } from '../contexts/OverlayLoadingContext';
+import { OverlayLoadingContext } from '../../contexts/OverlayLoadingContext';
 function Customers() {
     const navigate = useNavigate();
     const { loading, setOverlayLoading } = useContext(OverlayLoadingContext);

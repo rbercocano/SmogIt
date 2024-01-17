@@ -14,6 +14,12 @@ namespace SmogIt.Services
             var models = mapper.Map<List<AppointmentDetailsModel>>(entities.Items);
             return entities.As(models);
         }
+        public async Task<Core.Domains.PagedResult<AppointmentDetailsModel>> SearchAsync(int pageSize, int page, string sortBy, string direction, string q)
+        {
+            var entities = await appointmentRepository.SearchAsync(pageSize, page, sortBy, direction, q);
+            var models = mapper.Map<List<AppointmentDetailsModel>>(entities.Items);
+            return entities.As(models);
+        }
         public async Task<int> AddAsync(AppointmentModel appointment)
         {
             var entity = mapper.Map<Appointment>(appointment);

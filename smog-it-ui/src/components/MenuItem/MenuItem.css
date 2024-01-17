@@ -86,7 +86,7 @@ div.menu-item:hover {
     background-color: rgba(0, 0, 0, 0.04);
 }
 
-div.menu-item div.icon {
+div.menu-item a div.icon {
     min-width: 56px;
     color: rgba(0, 0, 0, 0.54);
     -webkit-flex-shrink: 0;
@@ -96,14 +96,21 @@ div.menu-item div.icon {
     display: -webkit-inline-flex;
     display: -ms-inline-flexbox;
     display: inline-flex;
+    position: absolute;
 }
 
-div.menu-item div a {
+div.menu-item a span {
+    display: block;
+    margin-left: 56px;
+}
+
+div.menu-item a {
     text-decoration: none;
     color: black;
+    display: inline-block;
 }
 
-div.menu-item>div.icon>svg {
+div.menu-item>a>div.icon>svg {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;

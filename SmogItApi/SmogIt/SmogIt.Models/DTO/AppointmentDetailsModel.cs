@@ -19,7 +19,8 @@
         public string LicensePlate { get; set; }
         public string VIN { get; set; }
         public int Year { get; set; }
-
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public List<AppointmentServiceDetailsModel> Services { get; set; }
         public decimal TotalPrice => Services.Sum(s => s.Price);
     }

@@ -8,11 +8,6 @@ table.scrollable {
     overflow-x: auto;
 }
 
-table.scrollable th,
-table.scrollable td {
-    text-align: left;
-}
-
 table.scrollable th {
     position: sticky;
     top: 0;

@@ -32,7 +32,7 @@ function Table({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, he
         } else {
             const searchValue = searchQuery.toLowerCase();
             const d = data.map(v => {
-                return { ...v, expanded: false }
+                return { expanded: false, ...v };
             });
             const sortedData = d.sort((a, b) => {
                 const order = direction === 'asc' ? 1 : -1;
@@ -56,7 +56,10 @@ function Table({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, he
         }
     };
     const onPageSizeChange = (e) => {
-        setPageSize(parseInt(e.target.value))
+        setPageSize(parseInt(e.target.value)) ;
+        if (onChange) {
+            onChange(sortBy, direction, currentPage, parseInt(e.target.value),searchQuery);
+        }
     }
     const onSearchChange = useDebouncedCallback((e) => {
         setSearchQuery(e.target.value);
