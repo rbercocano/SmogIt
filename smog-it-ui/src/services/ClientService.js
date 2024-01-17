@@ -35,7 +35,7 @@ const clientService = {
     if (direction) params.direction = direction;
     if (q) params.q = q;
     return await ApiClient.get(`${process.env.REACT_APP_API_BASE_URL}/Client/${clientId}/Appointments/${pageSize}/${page}`, params);
-  },
+  }
 };
 
 export default clientService;

@@ -26,6 +26,8 @@ namespace SmogIt.Models.Profiles
                 .ForMember(m => m.LicensePlate, m => m.MapFrom(s => s.Vehicle.LicensePlate))
                 .ForMember(m => m.VIN, m => m.MapFrom(s => s.Vehicle.VIN))
                 .ForMember(m => m.Year, m => m.MapFrom(s => s.Vehicle.Year))
+                .ForMember(m => m.FirstName, m => m.MapFrom(s => s.Vehicle.Client.FirstName))
+                .ForMember(m => m.LastName, m => m.MapFrom(s => s.Vehicle.Client.LastName))
                 .ForMember(m => m.Services, m => m.MapFrom(s => s.AppointmentServices));
 
             CreateMap<Entities.AppointmentService, AppointmentServiceDetailsModel>()

@@ -28,6 +28,11 @@ table.items td:nth-child(2) {
     text-align: right;
 }
 
+table.items td:nth-child(3) {
+    color: #d32f2f;
+    width: 10px;
+}
+
 table.items tfoot tr td {
     text-align: left;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
@@ -40,6 +45,7 @@ table.items tfoot tr td {
     padding: 6px 16px;
     color: rgba(0, 0, 0, 0.87);
 }
-table.items tfoot tr td:last-child{
+
+table.items tfoot tr td:last-child {
     text-align: right;
 }

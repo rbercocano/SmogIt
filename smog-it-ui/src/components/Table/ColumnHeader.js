@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { faArrowDownAZ, faArrowUpZA } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-ColumnHeader.defaultProps ={
-    align:'left'
+ColumnHeader.defaultProps = {
+    align: 'left'
 }
 function ColumnHeader({ title, sortable, sortKey, onSort, currentSortKey, align }) {
     const [icon, setIcon] = useState(faArrowDownAZ);
@@ -16,7 +16,7 @@ function ColumnHeader({ title, sortable, sortKey, onSort, currentSortKey, align 
     return (
         sortable ? (
             <th className={`text-${align}`}>
-                <span className='sortable' onClick={handleSortClick}>
+                <span className={`sortable text-${align}`} onClick={handleSortClick}>
                     {title} {currentSortKey === sortKey && <FontAwesomeIcon icon={icon} />}
                 </span>
             </th>

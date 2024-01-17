@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from "@mui/material/Button";
 import clientService from "../../services/ClientService";
-import VehicleService from "../../services/VehicleService";
 import { useForm } from "react-hook-form";
 import { FormInputText } from "../FormInputs/FormInputText";
 import { FormInputSelect } from "../FormInputs/FormInputSelect";
@@ -42,7 +41,7 @@ function NewVehicleModal({ clientId, opened, onCancel, onSave }) {
     useEffect(() => {
         setShow(opened);
         if (opened) {
-            form.reset();
+            reset();
             setMakes([{ value: 0, text: 'Select one' }]);
             setModels([{ value: 0, text: 'Select one' }]);
             vehicleService.getAllMakes().then((r) => {
@@ -84,7 +83,7 @@ function NewVehicleModal({ clientId, opened, onCancel, onSave }) {
             let m = (r ?? []).map(v => {
                 return { value: v.modelId, text: v.model }
             });
-            form.setValue('model', 0);
+            setValue('model', 0);
             setModels([...models, ...m]);
         });
     }
