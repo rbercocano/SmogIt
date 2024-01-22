@@ -7,16 +7,17 @@ import { useNavigate } from "react-router-dom";
 import { Tooltip, Button } from "@mui/material";
 import * as Yup from "yup";
 import './Customer.css';
-import { faCalendar, faChevronDown, faChevronRight, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faChevronDown, faChevronRight, faPlus, faPencil } from "@fortawesome/free-solid-svg-icons";
 import Badge from "../../components/Badge/Badge";
 import Toolbar from "../../components/Toolbar/Toolbar";
 import clientService from "../../services/ClientService";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FormInputText } from "../../components/FormInputs/FormInputText";
-import NewVehicleModal from "../../components/NewVehicleModal/NewVehicleModal";
+import VehicleModal from "../../components/VehicleModal/VehicleModal";
 import AppointmentModal from "../../components/AppointmentModal/AppointmentModal";
 import toast from "react-hot-toast";
+import { USPhoneInputText } from "../../components/FormInputs/FormattedInputs";
 
 const validationSchema = Yup.object({
 	firstName: Yup.string().required("Required field"),
@@ -27,14 +28,16 @@ const validationSchema = Yup.object({
 function Customer() {
 	const ACTIONS = {
 		TOGGLE_VEHICLE_MODAL: 'TOGGLE_VEHICLE_MODAL',
-		SELECT_VEHICLE: 'SELECT_VEHICLE',
+		SELECT_VEHICLE_APPT: 'SELECT_VEHICLE_APPT',
+		SELECT_VEHICLE_EDIT: 'SELECT_VEHICLE_EDIT',
 		VEHICLES_LOADED: 'VEHICLES_LOADED',
 		VEHICLE_SAVED: 'VEHICLE_SAVED',
 		TOGGLE_APPT_MODAL: 'TOGGLE_APPT_MODAL',
 		TOGGLE_APPT_DETAILS: 'TOGGLE_APPT_DETAILS',
 		APPT_LOADED: 'APPT_LOADED',
 		APPT_SAVED: 'APPT_SAVED',
-		CLIENT_LOADED: 'CLIENT_LOADED'
+		CLIENT_LOADED: 'CLIENT_LOADED',
+		APPT_SELECTED: 'APPT_SELECTED'
 	};
 	const initialState = {
 		vehicleSort: { sortBy: 'make', direction: 'asc' },
@@ -43,23 +46,34 @@ function Customer() {
 		vehiclePageSize: 10,
 		vehicles: [],
 		vehicleModalOpen: false,
-		selectedVehicle: null,
+		selectedAppoitment: null,
 		apptSort: { sortBy: 'appointmentDateTime', direction: 'desc' },
 		apptSearchQuery: null,
 		apptCurrentPage: 1,
 		apptPageSize: 10,
 		appointments: [],
 		apptModalOpen: false,
-		client: null
+		client: null,
+		selectedAppointment: null,
+		selectedVehicle: null
 	};
+	const { id } = useParams();
+	const form = useForm({ defaultValues: { clientId: id, firstName: "", lastName: "", phone: "", email: "" } });
+	const { handleSubmit, setValue, control, setError, clearErrors, getValues } = form;
 	const reducer = (state, action) => {
 		switch (action.type) {
 			case ACTIONS.CLIENT_LOADED:
 				return { ...state, client: action.payload };
 			case ACTIONS.TOGGLE_VEHICLE_MODAL:
 				return { ...state, vehicleModalOpen: !state.vehicleModalOpen };
-			case ACTIONS.SELECT_VEHICLE:
-				return { ...state, selectedVehicle: action.payload, apptModalOpen: true };
+			case ACTIONS.SELECT_VEHICLE_EDIT:
+				return {
+					...state, vehicleModalOpen: true, selectedVehicle: { ...action.payload, firstName: getValues('firstName'), lastName: getValues('lastName'), phone: getValues('phone'), email: getValues('email') }
+				};
+			case ACTIONS.SELECT_VEHICLE_APPT:
+				return {
+					...state, apptModalOpen: true, selectedAppoitment: { ...action.payload, firstName: getValues('firstName'), lastName: getValues('lastName'), phone: getValues('phone'), email: getValues('email') }
+				};
 			case ACTIONS.VEHICLE_SAVED:
 				return { ...state, vehicleModalOpen: false, vehicleCurrentPage: 1 };
 			case ACTIONS.VEHICLES_LOADED:
@@ -69,6 +83,10 @@ function Customer() {
 				return { ...state, apptModalOpen: !state.apptModalOpen };
 			case ACTIONS.APPT_SAVED:
 				return { ...state, apptModalOpen: false, apptCurrentPage: 1 };
+			case ACTIONS.APPT_SELECTED:
+				return {
+					...state, apptModalOpen: true, selectedAppoitment: { ...action.payload, firstName: getValues('firstName'), lastName: getValues('lastName'), phone: getValues('phone'), email: getValues('email') }
+				};
 			case ACTIONS.TOGGLE_APPT_DETAILS:
 				{
 					let appts = state.appointments.items.map((appointment) => {
@@ -82,11 +100,8 @@ function Customer() {
 			default: return state;
 		}
 	};
-	const { id } = useParams();
 	const navigate = useNavigate();
 	const [state, dispatch] = useReducer(reducer, initialState);
-	const form = useForm({ defaultValues: { clientId: id, firstName: "", lastName: "", phone: "", email: "" } });
-	const { handleSubmit, setValue, control, setError, clearErrors, getValues } = form;
 	useEffect(() => {
 		if (id) {
 			clientService.get(id).then((result) => {
@@ -140,7 +155,10 @@ function Customer() {
 		</tr>
 	);
 	const selectVehicleForAppt = (v) => {
-		dispatch({ type: ACTIONS.SELECT_VEHICLE, payload: v });
+		dispatch({ type: ACTIONS.SELECT_VEHICLE_APPT, payload: v });
+	};
+	const selectVehicleForEdit = (v) => {
+		dispatch({ type: ACTIONS.SELECT_VEHICLE_EDIT, payload: v });
 	};
 	const vehicleRowTemplate = (rowData, index) => {
 		const { vehicleId, make, model, licensePlate, year, vin } = rowData;
@@ -149,12 +167,18 @@ function Customer() {
 				<td>{year} {make} {model}</td>
 				<td>{licensePlate}</td>
 				<td>{vin}</td>
-				<td width={30}>
+				<td width={100}>
+					<Tooltip title='Edit Vehicle'>
+						<Button variant="contained" className='table-btn' onClick={() => selectVehicleForEdit(rowData)} >
+							<FontAwesomeIcon icon={faPencil} />
+						</Button>
+					</Tooltip>
 					<Tooltip title='Add Appointment'>
 						<Button variant="contained" className='table-btn' onClick={() => selectVehicleForAppt(rowData)} >
 							<FontAwesomeIcon icon={faCalendar} />
 						</Button>
 					</Tooltip>
+
 				</td>
 			</tr>
 		);
@@ -200,6 +224,9 @@ function Customer() {
 			return data;
 		}
 	};
+	const selectAppointment = (rowData) => {
+		dispatch({ type: ACTIONS.APPT_SELECTED, payload: rowData });
+	};
 	const apptHeaderTemplate = () => (
 		<tr>
 			<Table.ColumnHeader sortable={false} />
@@ -207,6 +234,7 @@ function Customer() {
 			<Table.ColumnHeader sortKey={'status'} title={'Status'} sortable={true} onSort={handleApptSort} currentSortKey={state.apptSort.sortBy} align='center' />
 			<Table.ColumnHeader sortKey={'appointmentDateTime'} title={'Date'} sortable={true} onSort={handleApptSort} currentSortKey={state.apptSort.sortBy} />
 			<Table.ColumnHeader sortKey={'totalPrice'} title={'Total'} sortable={true} onSort={handleApptSort} currentSortKey={state.apptSort.sortBy} align='right' />
+			<Table.ColumnHeader sortable={false} />
 		</tr>
 	);
 	const apptRowTemplate = (rowData, index) => {
@@ -229,6 +257,13 @@ function Customer() {
 					<td className='text-center'><Badge text={status} variant={variant} /></td>
 					<td>{Moment(appointmentDateTime).format('MM/DD/YYYY HH:mm')}</td>
 					<td>${totalPrice.toFixed(2)}</td>
+					<td width={30}>
+						<Tooltip title='Edit Appointment'>
+							<Button variant="contained" className='table-btn' onClick={() => selectAppointment(rowData)} >
+								<FontAwesomeIcon icon={faPencil} />
+							</Button>
+						</Tooltip>
+					</td>
 				</tr>
 				{
 					rowData.expanded && rowData.services.map(s => {
@@ -236,7 +271,8 @@ function Customer() {
 							<tr className="details-row" key={`details_${s.appointmentServiceId}`}>
 								<td></td>
 								<td colSpan={3}>{s.serviceName}</td>
-								<td>${s.price.toFixed(2)}</td>
+								<td>{s.originalPrice !== s.price && <s>${s.originalPrice.toFixed(2)}</s>} ${s.price.toFixed(2)}</td>
+								<td></td>
 							</tr>)
 					})
 				}
@@ -272,7 +308,7 @@ function Customer() {
 								<FormInputText name={"lastName"} control={control} label={"Last Name"} />
 							</div>
 							<div className="col-6 mb-3">
-								<FormInputText name={"phone"} control={control} label={"Phone"} />
+								<USPhoneInputText name={"phone"} control={control} label={"Phone"} />
 							</div>
 							<div className="col-6 mb-3">
 								<FormInputText name={"email"} control={control} label={"email"} />
@@ -300,8 +336,8 @@ function Customer() {
 						sortBy={state.apptSort.sortBy} direction={state.apptSort.direction} serverSide={true} />
 				</div>
 			</div>
-			{id && <NewVehicleModal opened={state.vehicleModalOpen} onCancel={handleCloseVehicleModal} clientId={id} onSave={handleVehicleSave} />}
-			{id && state.selectedVehicle && <AppointmentModal clientDetails={state.client} opened={state.apptModalOpen} onCancel={handleCloseApptModal} clientId={id} onSave={handleApptSave} vehicleDetails={state.selectedVehicle} />}
+			{id && <VehicleModal opened={state.vehicleModalOpen} onCancel={handleCloseVehicleModal} clientId={id} onSave={handleVehicleSave} vehicleDetails={state.selectedVehicle} />}
+			{id && state.selectedAppoitment && <AppointmentModal opened={state.apptModalOpen} onCancel={handleCloseApptModal} clientId={id} onSave={handleApptSave} appointmentDetails={state.selectedAppoitment} />}
 		</>
 	);
 }

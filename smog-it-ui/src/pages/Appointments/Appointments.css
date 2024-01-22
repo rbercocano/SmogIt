@@ -1,3 +1,25 @@
-.master-row td:first-child{
+.master-row td:first-child {
     width: 41px;
+}
+
+tr.master-row td:nth-child(6) {
+    text-align: right !important;
+}
+
+tr.details-row td:last-child {
+    text-align: right !important;
+    border-right: 1px solid rgba(224, 224, 224, 1);
+}
+
+tr.details-row td:first-child {
+    border-bottom: none;
+    border-top: none;
+}
+
+tr.details-row td:nth-child(2) {
+    border-left: 1px solid rgba(224, 224, 224, 1);
+}
+
+tr.details-row s {
+    color: #d32f2f;
 }

@@ -45,5 +45,10 @@ namespace SmogIt.Data.Repositories
             await context.SaveChangesAsync();
             return c.Entity.VehicleId;
         }
+        public async Task UpdateAsync(Vehicle vehicle)
+        {
+            context.Vehicles.Update(vehicle);
+            await context.SaveChangesAsync();
+        }
     }
 }

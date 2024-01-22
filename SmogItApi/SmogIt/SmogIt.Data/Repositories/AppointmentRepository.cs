@@ -87,17 +87,31 @@ namespace SmogIt.Data.Repositories
         }
         public async Task<int> AddAsync(Appointment appointment)
         {
-            try
-            {
-                var c = await context.Appointments.AddAsync(appointment);
-                await context.SaveChangesAsync();
-                return c.Entity.AppointmentId;
-            }
-            catch (Exception ex)
-            {
+            var c = await context.Appointments.AddAsync(appointment);
+            await context.SaveChangesAsync();
+            return c.Entity.AppointmentId;
+        }
 
-                throw;
-            }
+        public async Task UpdateAsync(Appointment appointment)
+        {
+            await context.Appointments.Where(c => c.AppointmentId == appointment.AppointmentId)
+                             .ExecuteUpdateAsync(setters =>
+                                setters.SetProperty(b => b.Notes, appointment.Notes)
+                               .SetProperty(b => b.StatusId, appointment.StatusId));
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<List<Appointment>> GetNotCompleted()
+        {
+            return await context.Appointments
+            .Include(c => c.Status)
+            .Include(c => c.AppointmentServices)
+            .ThenInclude(c => c.Service)
+            .Include(c => c.Vehicle)
+            .ThenInclude(v => v.VehicleModel)
+            .ThenInclude(v => v.VehicleMake)
+            .Include(c => c.Vehicle)
+            .ThenInclude(c => c.Client).Where(c => new[] { 1, 2 }.Contains(c.StatusId)).OrderByDescending(c => c.AppointmentDateTime).ToListAsync();
         }
     }
 }

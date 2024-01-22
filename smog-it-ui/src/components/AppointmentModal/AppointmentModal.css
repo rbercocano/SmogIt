@@ -20,7 +20,7 @@ table.items {
     width: 100%;
 }
 
-table.items tr:not(:last-child) td {
+table.items tr td {
     border: none;
 }
 
@@ -44,8 +44,13 @@ table.items tfoot tr td {
     vertical-align: inherit;
     padding: 6px 16px;
     color: rgba(0, 0, 0, 0.87);
+    border-top: 1px solid rgba(224, 224, 224, 1);
 }
 
 table.items tfoot tr td:last-child {
     text-align: right;
+}
+
+table.items s {
+    color: #d32f2f;
 }

@@ -35,7 +35,7 @@ function ConfirmationModal({ text, header, params, opened, onClose, onOk }) {
                 {text}
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
+                <Button variant="gray" onClick={handleClose}>
                     No
                 </Button>
                 <Button variant="primary" onClick={handleOk}>

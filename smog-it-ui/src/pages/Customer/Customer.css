@@ -1,7 +1,10 @@
 tr.master-row td:last-child,
 tr.details-row td:last-child {
-    text-align: right !important;
     border-right: 1px solid rgba(224, 224, 224, 1);
+}
+tr.master-row td:nth-child(5),
+tr.details-row td:nth-child(3) {
+    text-align: right !important;
 }
 
 tr.details-row td:first-child {

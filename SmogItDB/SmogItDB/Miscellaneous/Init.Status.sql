@@ -10,7 +10,7 @@ IF NOT EXISTS(SELECT [StatusId] FROM [dbo].[Status] WHERE [StatusId] = 3 AND [St
 BEGIN
   INSERT [dbo].[Status] ([StatusId], [StatusName]) VALUES (3, N'Completed')
 END
-IF NOT EXISTS(SELECT [StatusId] FROM [dbo].[Status] WHERE [StatusId] = 4 AND [StatusName] = N'Canceled')
+IF NOT EXISTS(SELECT [StatusId] FROM [dbo].[Status] WHERE [StatusId] = 4 AND [StatusName] = N'Cancelled')
 BEGIN
-  INSERT [dbo].[Status] ([StatusId], [StatusName]) VALUES (4, N'Canceled')
+  INSERT [dbo].[Status] ([StatusId], [StatusName]) VALUES (4, N'Cancelled')
 END

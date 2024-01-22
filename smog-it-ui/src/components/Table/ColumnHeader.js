@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { faArrowDownAZ, faArrowUpZA } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-ColumnHeader.defaultProps = {
-    align: 'left'
-}
 function ColumnHeader({ title, sortable, sortKey, onSort, currentSortKey, align }) {
     const [icon, setIcon] = useState(faArrowDownAZ);
     const [sort, setSort] = useState({ sortBy: sortKey, direction: 'asc' });
@@ -21,9 +18,17 @@ function ColumnHeader({ title, sortable, sortKey, onSort, currentSortKey, align 
                 </span>
             </th>
         ) : (
-            <th>{title}</th>
+
+            <th className={`text-${align}`}>
+                <span className={`sortable text-${align}`}>
+                    {title}
+                </span>
+            </th >
         )
     );
 }
-
+ColumnHeader.defaultProps = {
+    onSort: (a, b) => { },
+    align: 'left'
+};
 export default ColumnHeader;

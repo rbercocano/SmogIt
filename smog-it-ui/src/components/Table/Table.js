@@ -5,6 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Paginator from './Paginator';
 import { useWhatChanged } from '@simbathesailor/use-what-changed';
 import { useDebouncedCallback } from 'use-debounce';
+import { filterByKeys, sortByKey } from '../../utils/arrayUtils'
 
 function Table({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, headerTemplate, serverSide }) {
     const colCount = React.Children.toArray(headerTemplate().props.children).length;
@@ -20,7 +21,7 @@ function Table({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, he
     useWhatChanged([sortBy, direction, currentPage, pageSize, searchQuery], 'sortBy, direction, currentPage, pageSize, searchQuery');
     useEffect(() => {
         render();
-    }, [data]);
+    }, [data, sortBy, direction, currentPage, pageSize, searchQuery]);
     useEffect(() => {
         if (onChange)
             onChange(sortBy, direction, currentPage, pageSize, searchQuery);
@@ -34,31 +35,19 @@ function Table({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, he
             const d = data.map(v => {
                 return { expanded: false, ...v };
             });
-            const sortedData = d.sort((a, b) => {
-                const order = direction === 'asc' ? 1 : -1;
-                if (a[sortBy] !== b[sortBy]) {
-                    return a[sortBy] > b[sortBy] ? order : -order;
-                }
-                return 0;
-            });
-
-            const filteredData = searchQuery === '' ? sortedData :
-                sortedData.filter(item => {
-                    return columns.some((column) => String(item[column]).toLowerCase().includes(searchValue));
-                });
-            setRowCount(filteredData.length);
-
+            const sortedData = sortByKey(d, sortBy, direction);
+            const filteredData = filterByKeys(sortedData, columns, searchValue);
             const startIndex = (currentPage - 1) * pageSize;
             const endIndex = startIndex + pageSize;
             const paginatedData = filteredData.slice(startIndex, endIndex);
-
+            setRowCount(filteredData.length);
             setDisplayedData(paginatedData);
         }
     };
     const onPageSizeChange = (e) => {
-        setPageSize(parseInt(e.target.value)) ;
+        setPageSize(parseInt(e.target.value));
         if (onChange) {
-            onChange(sortBy, direction, currentPage, parseInt(e.target.value),searchQuery);
+            onChange(sortBy, direction, currentPage, parseInt(e.target.value), searchQuery);
         }
     }
     const onSearchChange = useDebouncedCallback((e) => {
@@ -104,5 +93,6 @@ function Table({ data, rowTemplate, sortBy, direction, onChange, rowsPerPage, he
         </div>
     );
 }
-
+Table.defaultProps = {
+};
 export default Object.assign(Table, { ColumnHeader });

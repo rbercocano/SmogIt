@@ -14,6 +14,7 @@ namespace SmogIt.Data.Context.Mapping
             builder.Property(a => a.AppointmentId).IsRequired();
             builder.Property(a => a.ServiceId).IsRequired();
             builder.Property(a => a.Price).IsRequired().HasColumnType("DECIMAL(10,2)");
+            builder.Property(a => a.OriginalPrice).IsRequired().HasColumnType("DECIMAL(10,2)");
 
             builder.HasOne(a => a.Appointment)
                 .WithMany(a => a.AppointmentServices)
