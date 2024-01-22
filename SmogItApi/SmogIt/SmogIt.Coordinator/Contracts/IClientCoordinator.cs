@@ -11,9 +11,11 @@ namespace SmogIt.Coordinator.Contracts
         Task<PagedResult<ClientDetailsModel>> GetClientsAsync(int pageSize, int page, string? sortBy, string? direction, string? q);
         Task UpdateAsync(int id, ClientModel client);
 
-        Task<int> AddVehicleAsync(VehicleModel vehicle);
+        Task<int> AddVehicleAsync(VehicleModel model);
         Task<PagedResult<VehicleDetailsModel>> GeVehiclesByClientAsync(int clientId, int pageSize, int page, string sortBy, string direction, string q);
-        Task<int> AddAppointmentAsync(AppointmentModel vehicle);
+        Task<int> AddAppointmentAsync(AddAppointmentModel model);
+        Task UpdateAppointmentAsync(int appointmentId, UpdateAppointmentModel model);
         Task<PagedResult<AppointmentDetailsModel>> GeAppointmentsByClientAsync(int clientId, int pageSize, int page, string sortBy, string direction, string q);
+        Task UpdateVehicleAsync(int id, VehicleModel model);
     }
 }

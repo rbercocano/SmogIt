@@ -49,25 +49,28 @@ function Paginator({ pageSize, rowCount, onPageChange, page }) {
         }
     }
     return rowCount > 0 && (
-        <nav className='pagination'>
-            <button onClick={() => handlePageChange(1)} disabled={currentPage === 1}>
-                <FontAwesomeIcon icon={faAnglesLeft} />
-            </button>
-            <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-                <FontAwesomeIcon icon={faChevronLeft} />
-            </button>
-            {buttons.map(b => (
-                <button key={b} className={currentPage === b ? 'active' : ''} onClick={() => handlePageChange(b)}>
-                    {b}
+        <>
+            <p className='paginator-display'>{`Showing from ${(currentPage - 1) * pageSize + 1} to ${(currentPage * pageSize) > rowCount ?   rowCount: (currentPage * pageSize)} of ${rowCount} records (${totalPages} ${totalPages > 1? 'pages': 'page'} )`}</p>
+            <nav className='pagination'>
+                <button onClick={() => handlePageChange(1)} disabled={currentPage === 1}>
+                    <FontAwesomeIcon icon={faAnglesLeft} />
                 </button>
-            ))}
-            <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
-                <FontAwesomeIcon icon={faChevronRight} />
-            </button>
-            <button onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages}>
-                <FontAwesomeIcon icon={faAnglesRight} />
-            </button>
-        </nav>
+                <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                    <FontAwesomeIcon icon={faChevronLeft} />
+                </button>
+                {buttons.map(b => (
+                    <button key={b} className={currentPage === b ? 'active' : ''} onClick={() => handlePageChange(b)}>
+                        {b}
+                    </button>
+                ))}
+                <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                    <FontAwesomeIcon icon={faChevronRight} />
+                </button>
+                <button onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages}>
+                    <FontAwesomeIcon icon={faAnglesRight} />
+                </button>
+            </nav>
+        </>
     );
 }
 

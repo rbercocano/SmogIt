@@ -45,6 +45,7 @@ builder.Services.AddScoped<IVehicleModelService, VehicleModelService>();
 builder.Services.AddScoped<IClientCoordinator, ClientCoordinator>();
 builder.Services.AddScoped<IVehicleCoordinator, VehicleCoordinator>();
 builder.Services.AddScoped<IStatusCoordinator, StatusCoordinator>();
+builder.Services.AddScoped<IUserCoordinator, UserCoordinator>();
 builder.Services.AddScoped<IServiceCoordinator, ServiceCoordinator>();
 builder.Services.AddScoped<IAppointmentCoordinator, AppointmentCoordinator>();
 
@@ -85,7 +86,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 app.UseCors();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthorization();
 app.UseExceptionHandler("/error");
 

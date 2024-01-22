@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SmogIt.Core.Domains;
+using SmogIt.Models.Entities;
 
 namespace SmogIt.Data.Contracts
 {
     public interface IUserRepository
     {
-        // Similar CRUD operations for User entity
+        Task<int> AddAsync(User user);
+        Task<PagedResult<User>> GetUsersAsync(int pageSize, int page, string sortBy = "FirstName", string direction = "asc", string q = "");
+        Task<bool> UpdateAsync(User user);
+        Task<User?> FindAsync(int userId);
     }
 }

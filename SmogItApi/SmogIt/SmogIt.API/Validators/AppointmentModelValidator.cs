@@ -3,7 +3,7 @@ using SmogIt.Models.DTO;
 
 namespace SmogIt.API.Validators
 {
-    public class AppointmentModelValidator : AbstractValidator<AppointmentModel>
+    public class AppointmentModelValidator : AbstractValidator<AddAppointmentModel>
     {
         public AppointmentModelValidator()
         {

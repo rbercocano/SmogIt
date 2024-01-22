@@ -4,6 +4,7 @@ namespace SmogIt.Services.Contracts
 {
     public interface IAppointmentServiceService
     {
-        Task AddAync(int appointmentId, AppointmentServiceModel appointmentServiceModel);
+        Task<int> AddAync(int appointmentId, AppointmentServiceModel appointmentServiceModel);
+        Task RemoveAync(int AppointmentServiceId);
     }
 }

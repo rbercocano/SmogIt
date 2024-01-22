@@ -4,6 +4,8 @@ namespace SmogIt.Coordinator.Contracts
 {
     public interface IServiceCoordinator
     {
-        Task<List<ServiceModel>> GetAllAsync();
+        Task<int> AddAsync(ServiceModel service);
+        Task<List<ServiceDetailsModel>> GetAllAsync();
+        Task UpdateAsync(int id, ServiceModel service);
     }
 }

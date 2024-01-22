@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Modal from 'react-bootstrap/Modal';
-import { Button, FormHelperText, Tooltip } from "@mui/material";
+import { Button, Drawer, FormHelperText, Tooltip } from "@mui/material";
 import serviceService from "../../services/ServiceService";
 import clientService from "../../services/ClientService";
 import statusService from "../../services/StatusService";
+import appointmentService from "../../services/AppointmentService";
 import { useForm } from "react-hook-form";
 import { FormInputSelect } from "../FormInputs/FormInputSelect";
 import * as Yup from "yup";
@@ -12,8 +12,11 @@ import './AppointmentModal.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import Title from '../Title/Title';
+import toast from 'react-hot-toast';
+import { except } from '../../utils/arrayUtils';
+import { CurrencyInput } from '../FormInputs/FormattedInputs';
 
-function AppointmentModal({ clientDetails, vehicleDetails, opened, onCancel, onSave }) {
+function AppointmentModal({ onClose, onCancel, onSave, opened, appointmentDetails }) {
     const validationSchema = Yup.object({
         service: Yup.number().min(1, 'Select a Service')
     });
@@ -21,12 +24,13 @@ function AppointmentModal({ clientDetails, vehicleDetails, opened, onCancel, onS
     const [services, setServices] = useState([]);
     const [allServices, setAllServices] = useState([]);
     const [statuses, setStatuses] = useState([]);
+    const [removedServices, setRemovedServices] = useState([]);
     const [selectedServices, setSelectedServices] = useState([]);
     const [showServiceError, setShowServiceError] = useState(false);
     const form = useForm({
         defaultValues: {
             id: 0,
-            vehicleId: vehicleDetails.vehicleId,
+            vehicleId: appointmentDetails.vehicleId,
             vehicle: '',
             client: '',
             notes: '',
@@ -42,17 +46,25 @@ function AppointmentModal({ clientDetails, vehicleDetails, opened, onCancel, onS
         if (opened) {
             reset();
             setShowServiceError(false);
-            setSelectedServices([]);
-            setValue('vehicle', `${vehicleDetails.year} ${vehicleDetails.make} ${vehicleDetails.model}`);
-            setValue('client', `${vehicleDetails.firstName} ${vehicleDetails.lastName}`);
+            if (appointmentDetails.appointmentId) {
+                setSelectedServices(appointmentDetails.services);
+                setValue('notes', appointmentDetails.notes);
+                setValue('statusId', appointmentDetails.statusId);
+            }
+            else {
+                setSelectedServices([]);
+                setValue('service', 0);
+                setValue('statusId', 1);
+            }
+            setValue('vehicle', `${appointmentDetails.year} ${appointmentDetails.make} ${appointmentDetails.model}`);
+            setValue('client', `${appointmentDetails.firstName} ${appointmentDetails.lastName}`);
             let p1 = serviceService.getAll();
             let p2 = statusService.getAll();
             Promise.all([p1, p2]).then(r => {
-                setAllServices(r[0]);
-                setServices(r[0]);
+                let arr = (appointmentDetails.appointmentId ? except(r[0], appointmentDetails.services, 'serviceId') : r[0]).filter(s => s.active);
+                setServices(arr);
                 setStatuses(r[1]);
-                setValue('service', 0);
-                setValue('statusId', 1);
+                setAllServices(r[0]);
             });
         }
     }, [opened]);
@@ -61,17 +73,30 @@ function AppointmentModal({ clientDetails, vehicleDetails, opened, onCancel, onS
         onCancel();
     };
     const save = (data) => {
-        let req = { vehicleId: vehicleDetails.vehicleId, statusId: data.statusId, notes: data.notes, services: selectedServices.map(s => { return { serviceId: s.serviceId, price: s.price } }) };
         if (selectedServices.length === 0) {
             setShowServiceError(true);
             return;
         }
+        let req = { appointmentId: appointmentDetails.appointmentId, vehicleId: appointmentDetails.vehicleId, statusId: data.statusId, notes: data.notes };
+        if (appointmentDetails.appointmentId) {
+            req.servicesToAdd = selectedServices.filter(s => s.appointmentServiceId === null).map(s => { return { serviceId: s.serviceId, price: s.price } });
+            req.servicesToRemove = [...removedServices];
+            clientService.updateAppointment(req).then((id) => {
+                setValue("id", id);
+                clearErrors();
+                setShowServiceError(false);
+                if (onSave)
+                    onSave({ ...req });
+            });
+            return;
+        }
+        req.services = selectedServices.map(s => { return { serviceId: s.serviceId, price: s.price } });
         clientService.addAppointment(req).then((id) => {
             setValue("id", id);
             clearErrors();
             setShowServiceError(false);
             if (onSave)
-                onSave({ ...req, id: id });
+                onSave({ ...req, appointmentId: id });
         });
     };
     const handleSelect = (e) => {
@@ -88,12 +113,15 @@ function AppointmentModal({ clientDetails, vehicleDetails, opened, onCancel, onS
             validationSchema.validateSync({
                 service: id
             }, { abortEarly: false });
-            setSelectedServices([...selectedServices, { serviceId: service[0].serviceId, serviceName: service[0].serviceName, notes: getValues('notes'), price: parseFloat(getValues('price') ?? 0) }])
-            setValue('service', 0);
-            setValue('price', 0);
-            setServices(services.filter(f => f.serviceId !== service[0].serviceId));
+            if (appointmentDetails.appointmentId)
+                setSelectedServices([...selectedServices, { appointmentServiceId: null, serviceId: service[0].serviceId, serviceName: service[0].serviceName, notes: getValues('notes'), price: parseFloat(getValues('price') ?? 0), originalPrice: parseFloat(service[0].price) ?? 0 }])
+
+            setServices(services.filter(f => f.serviceId !== service[0].serviceId && f.active));
             clearErrors();
             setShowServiceError(false);
+            setValue('price', 0);
+            setValue('service', 0);
+
         } catch (e) {
             e.inner.forEach((err) => {
                 setError(err.path, {
@@ -103,31 +131,36 @@ function AppointmentModal({ clientDetails, vehicleDetails, opened, onCancel, onS
             });
         }
     };
-    const removeService = (id) => {
-        let serviceList = [...services, ...allServices.filter(a => a.serviceId === id)].sort((a, b) => (a.serviceName > b.serviceName) ? 1 : ((b.serviceName > a.serviceName) ? -1 : 0));
+    const removeService = (service) => {
+        if (appointmentDetails.appointmentId && service.appointmentServiceId)
+            setRemovedServices([...removedServices, service.appointmentServiceId]);
+        let serviceList = [...services, ...allServices.filter(a => a.serviceId === service.serviceId && a.active)].sort((a, b) => (a.serviceName > b.serviceName) ? 1 : ((b.serviceName > a.serviceName) ? -1 : 0));
         setServices(serviceList);
-        setSelectedServices(selectedServices.filter(a => a.serviceId !== id));
+        setSelectedServices(selectedServices.filter(a => a.serviceId !== service.serviceId));
+
     };
     const reduce = (sp, s) => {
         return sp + s.price;
     }
     return (
-        <Modal show={show} onHide={handleCancel} size="lg">
-            <form autoComplete="off" onSubmit={handleSubmit(save)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>
-                        Add Appointment
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
+        <Drawer
+            anchor='right'
+            open={opened}
+            PaperProps={{ sx: { width: "28%" } }}
+            onClose={onClose}>
+            <div className='drawer-content'>
+                <form autoComplete="off" onSubmit={handleSubmit(save)}>
+                    <Title title={appointmentDetails.appointmentId ? 'Change Appointment' : 'New Appointment'}>
+                    </Title>
+
                     <div className="row">
                         <div className="col-12 mb-2">
                             <FormInputText name={"client"} control={control} label={"Client"} disabled={true} />
                         </div>
-                        <div className="col-6 mb-2">
+                        <div className="col-12 mb-2">
                             <FormInputText name={"vehicle"} control={control} label={"Vehicle"} disabled={true} />
                         </div>
-                        <div className="col-6 mb-2">
+                        <div className="col-12 mb-2">
                             <FormInputSelect name={"statusId"} control={control} label={"Status"} onSelectItem={handleSelect} items={[...statuses.map((s) => { return { text: s.statusName, value: s.statusId } })]}
                             />
                         </div>
@@ -136,11 +169,11 @@ function AppointmentModal({ clientDetails, vehicleDetails, opened, onCancel, onS
                         <div className="col-12 mb-3">
                             <Title title='Services' />
                         </div>
-                        <div className="col-6 mb-3">
+                        <div className="col-12 mb-3">
                             <FormInputSelect name={"service"} control={control} label={"Service"} onSelectItem={handleSelect} items={[{ text: 'Select one', value: 0 }, ...services.map((s) => { return { text: s.serviceName, value: s.serviceId } })]} />
                         </div>
-                        <div className="col-4 mb-2">
-                            <FormInputText name={"price"} control={control} label={"Price"} />
+                        <div className="col-10 mb-2">
+                            <CurrencyInput name={"price"} control={control} label={"Price"} />
                         </div>
                         <div className="col-2 mb-2">
                             <Button variant="contained" type="button" fullWidth onClick={addService} style={{ height: '40px', width: '40px', float: 'right' }}>
@@ -148,7 +181,7 @@ function AppointmentModal({ clientDetails, vehicleDetails, opened, onCancel, onS
                             </Button>
                         </div>
                         {showServiceError && <FormHelperText error>Select at least one service...</FormHelperText>}
-                        <div className="col-6 mb-2">
+                        <div className="col-12 mb-2">
                             {selectedServices.length > 0 &&
                                 <table className='items'>
                                     <tbody>
@@ -157,10 +190,10 @@ function AppointmentModal({ clientDetails, vehicleDetails, opened, onCancel, onS
                                                 return (
                                                     <tr key={s.serviceId}>
                                                         <td>{s.serviceName}</td>
-                                                        <td>${s.price.toFixed(2)}</td>
+                                                        <td>{s.price !== s.originalPrice && <s>${s.originalPrice.toFixed(2)}</s>} ${s.price.toFixed(2)}</td>
                                                         <td>
                                                             <Tooltip title='Remove service'>
-                                                                <FontAwesomeIcon icon={faTimesCircle} onClick={() => removeService(s.serviceId)} />
+                                                                <FontAwesomeIcon icon={faTimesCircle} onClick={() => removeService(s)} />
                                                             </Tooltip>
                                                         </td>
                                                     </tr>
@@ -179,17 +212,15 @@ function AppointmentModal({ clientDetails, vehicleDetails, opened, onCancel, onS
                                 </table>}
                         </div>
                     </div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="contained" onClick={handleCancel} color="error">
-                        Cancel
-                    </Button>
-                    <Button variant="contained" type="submit">
+                    <Button variant="contained" className="w-100 mb-1" type="submit">
                         Save
                     </Button>
-                </Modal.Footer>
-            </form>
-        </Modal>
+                    <Button variant="contained" className="w-100" onClick={handleCancel} color="gray" >
+                        Close
+                    </Button>
+                </form>
+            </div>
+        </Drawer>
 
     );
 }

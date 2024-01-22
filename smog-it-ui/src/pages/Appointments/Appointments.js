@@ -1,18 +1,22 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Table from "../../components/Table/Table";
-import Title from "../../components/Title/Title";
 import Moment from 'moment';
 import './Appointments.css';
 import React, { useReducer } from "react";
 import Badge from "../../components/Badge/Badge";
-import { faChevronDown, faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import appointmentService from "../../services/appointmentService";
+import Table from "../../components/Table/Table";
+import Title from "../../components/Title/Title";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPencil, faChevronDown, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import appointmentService from "../../services/AppointmentService";
+import AppointmentModal from '../../components/AppointmentModal/AppointmentModal';
+import { Button, Tooltip } from '@mui/material';
+import toast from 'react-hot-toast';
 function Appointments() {
     const ACTIONS = {
         TOGGLE_APPT_MODAL: 'TOGGLE_APPT_MODAL',
         TOGGLE_APPT_DETAILS: 'TOGGLE_APPT_DETAILS',
         APPT_LOADED: 'APPT_LOADED',
-        APPT_SAVED: 'APPT_SAVED'
+        APPT_SAVED: 'APPT_SAVED',
+        APPT_SELECTED: 'APPT_SELECTED'
     };
     const initialState = {
         apptSort: { sortBy: 'appointmentDateTime', direction: 'desc' },
@@ -20,10 +24,13 @@ function Appointments() {
         apptCurrentPage: 1,
         apptPageSize: 10,
         appointments: [],
-        apptModalOpen: false
+        apptModalOpen: false,
+        selectedAppointment: null
     };
     const reducer = (state, action) => {
         switch (action.type) {
+            case ACTIONS.APPT_SELECTED:
+                return { ...state, selectedAppointment: action.payload, apptModalOpen: true };
             case ACTIONS.APPT_LOADED:
                 return { ...state, ...action.payload };
             case ACTIONS.TOGGLE_APPT_MODAL:
@@ -43,6 +50,9 @@ function Appointments() {
             default: return state;
         }
     };
+    const selectAppointment = (rowData) => {
+        dispatch({ type: ACTIONS.APPT_SELECTED, payload: rowData });
+    };
     const [state, dispatch] = useReducer(reducer, initialState);
     const apptHeaderTemplate = () => (
         <tr>
@@ -51,7 +61,8 @@ function Appointments() {
             <Table.ColumnHeader sortKey={'year'} title={'Vehicle'} sortable={true} onSort={handleApptSort} currentSortKey={state.apptSort.sortBy} />
             <Table.ColumnHeader sortKey={'status'} title={'Status'} sortable={true} onSort={handleApptSort} currentSortKey={state.apptSort.sortBy} align='center' />
             <Table.ColumnHeader sortKey={'appointmentDateTime'} title={'Date'} sortable={true} onSort={handleApptSort} currentSortKey={state.apptSort.sortBy} />
-            <Table.ColumnHeader sortKey={'totalPrice'} title={'Total'} sortable={true} onSort={handleApptSort} currentSortKey={state.apptSort.sortBy} align='right' />
+            <Table.ColumnHeader sortKey={'totalPrice'} title={'Total'} sortable={false} align='right' />
+            <Table.ColumnHeader sortable={false} />
         </tr>
     );
     const apptRowTemplate = (rowData, index) => {
@@ -75,6 +86,13 @@ function Appointments() {
                     <td className='text-center'><Badge text={status} variant={variant} /></td>
                     <td>{Moment(appointmentDateTime).format('MM/DD/YYYY HH:mm')}</td>
                     <td>${totalPrice.toFixed(2)}</td>
+                    <td width={30}>
+                        <Tooltip title='View Details'>
+                            <Button variant="contained" className='table-btn' onClick={() => selectAppointment(rowData)} >
+                                <FontAwesomeIcon icon={faPencil} />
+                            </Button>
+                        </Tooltip>
+                    </td>
                 </tr>
                 {
                     rowData.expanded && rowData.services.map(s => {
@@ -82,12 +100,24 @@ function Appointments() {
                             <tr className="details-row" key={`details_${s.appointmentServiceId}`}>
                                 <td></td>
                                 <td colSpan={4}>{s.serviceName}</td>
-                                <td>${s.price.toFixed(2)}</td>
+                                <td>{s.originalPrice !== s.price && <s>${s.originalPrice.toFixed(2)}</s>} ${s.price.toFixed(2)}</td>
+                                <td></td>
                             </tr>)
                     })
                 }
             </React.Fragment >
         );
+    };
+    const handleCloseApptModal = () => {
+        dispatch({ type: ACTIONS.TOGGLE_APPT_MODAL });
+    };
+    const handleApptSave = async (v) => {
+        toast.success('Appointment saved');
+        dispatch({ type: ACTIONS.APPT_SAVED });
+        const data = await appointmentService.search(state.apptPageSize, 1, state.apptSort.sortBy, state.apptSort.direction, state.apptSearchQuery);
+        dispatch({ type: ACTIONS.APPT_LOADED, payload: { appointments: data } });
+        return data;
+
     };
     const toggleDetails = (appointmentId) => {
         dispatch({ type: ACTIONS.TOGGLE_APPT_DETAILS, payload: appointmentId });
@@ -100,7 +130,6 @@ function Appointments() {
         const data = await appointmentService.search(pageSize, currentPage, sortBy, direction, searchQuery);
         dispatch({ type: ACTIONS.APPT_LOADED, payload: { apptCurrentPage: currentPage, apptPageSize: pageSize, apptSearchQuery: searchQuery, appointments: data } });
         return data;
-
     };
     return (<>
         <div className='app-container-wrapper col-12'>
@@ -109,6 +138,7 @@ function Appointments() {
                 <Table data={state.appointments} rowTemplate={apptRowTemplate} headerTemplate={apptHeaderTemplate} onChange={handleApptTableChange}
                     sortBy={state.apptSort.sortBy} direction={state.apptSort.direction} serverSide={true} />
             </div>
+            {state.selectedAppointment && <AppointmentModal opened={state.apptModalOpen} onCancel={handleCloseApptModal} onSave={handleApptSave} appointmentDetails={state.selectedAppointment} />}
         </div>
     </>);
 }

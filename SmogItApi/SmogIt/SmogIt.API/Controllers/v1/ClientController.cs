@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SmogIt.Coordinator.Contracts;
 using SmogIt.Core.Domains;
@@ -52,6 +53,13 @@ namespace SmogIt.API.Controllers.v1
             return new ObjectResult(id) { StatusCode = 201 };
         }
 
+        [HttpPut("Vehicles/{id:int}")]
+        public async Task<ActionResult> UpdateAsync(int id, [FromBody] VehicleModel vehicle)
+        {
+            await clientCoordinator.UpdateVehicleAsync(id, vehicle);
+            return Ok();
+        }
+
         [HttpGet("{clientId}/Vehicles/{pageSize:int}/{page:int}")]
         public async Task<ActionResult<ClientDetailsModel>> GetVehiclesByClientIdAsync(int clientId, int pageSize, int page, [FromQuery] string? sortBy, [FromQuery] string? direction, [FromQuery] string? q)
         {
@@ -60,10 +68,16 @@ namespace SmogIt.API.Controllers.v1
         }
 
         [HttpPost("Appointments")]
-        public async Task<ActionResult> AddAppointmentAsync([FromBody] AppointmentModel appointment)
+        public async Task<ActionResult> AddAppointmentAsync([FromBody] AddAppointmentModel appointment)
         {
             var id = await clientCoordinator.AddAppointmentAsync(appointment);
             return new ObjectResult(id) { StatusCode = 201 };
+        }
+        [HttpPut("Appointments/{appointmentId:int}")]
+        public async Task<ActionResult> UpdateAppointmentAsync(int appointmentId, [FromBody] UpdateAppointmentModel appointment)
+        {
+            await clientCoordinator.UpdateAppointmentAsync(appointmentId, appointment);
+            return Ok();
         }
         [HttpGet("{clientId}/Appointments/{pageSize:int}/{page:int}")]
         public async Task<ActionResult<AppointmentDetailsModel>> GetAppointmentsByClientIdAsync(int clientId, int pageSize, int page, [FromQuery] string? sortBy, [FromQuery] string? direction, [FromQuery] string? q)

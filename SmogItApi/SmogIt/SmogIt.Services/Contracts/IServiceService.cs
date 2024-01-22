@@ -1,11 +1,12 @@
-﻿using SmogIt.Core.Domains;
-using SmogIt.Models.DTO;
-using SmogIt.Models.Entities;
+﻿using SmogIt.Models.DTO;
 
 namespace SmogIt.Services.Contracts
 {
     public interface IServiceService
     {
-        Task<List<ServiceModel>> GetAllAsync();
+        Task<ServiceDetailsModel?> FindAsync(int id);
+        Task<List<ServiceDetailsModel>> GetAllAsync();
+        Task<int> AddAsync(ServiceModel service);
+        Task UpdateAsync(int id, ServiceModel service);
     }
 }

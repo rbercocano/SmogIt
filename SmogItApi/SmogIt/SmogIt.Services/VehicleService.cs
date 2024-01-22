@@ -16,6 +16,12 @@ namespace SmogIt.Services
             var id = await vehicleRepository.AddAsync(entity);
             return id;
         }
+        public async Task UpdateAsync(int id,VehicleModel vehicle)
+        {
+            var entity = mapper.Map<Entities.Vehicle>(vehicle);
+            entity.VehicleId = id;
+            await vehicleRepository.UpdateAsync(entity);
+        }
 
         public async Task<PagedResult<VehicleDetailsModel>> GetByClientAsync(int clientId, int pageSize, int page, string sortBy, string direction, string q)
         {

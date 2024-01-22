@@ -19,6 +19,9 @@ const clientService = {
   addVehicle: async (vehicle) => {
     return await ApiClient.post(`${process.env.REACT_APP_API_BASE_URL}/Client/Vehicles`, vehicle);
   },
+  updateVehicle: async (vehicle) => {
+    return await ApiClient.put(`${process.env.REACT_APP_API_BASE_URL}/Client/Vehicles/${vehicle.vehicleId}`, vehicle);
+  },
   searchVehicles: async (clientId,pageSize, page, sortBy, direction, q) => {
     const params = {};
     if (sortBy) params.sortBy = sortBy;
@@ -28,6 +31,9 @@ const clientService = {
   },
   addAppointment: async (appointment) => {
     return await ApiClient.post(`${process.env.REACT_APP_API_BASE_URL}/Client/Appointments`, appointment);
+  },
+  updateAppointment: async (appointment) => {
+    return await ApiClient.put(`${process.env.REACT_APP_API_BASE_URL}/Client/Appointments/${appointment.appointmentId}`, appointment);
   },
   searchAppointment: async (clientId,pageSize, page, sortBy, direction, q) => {
     const params = {};

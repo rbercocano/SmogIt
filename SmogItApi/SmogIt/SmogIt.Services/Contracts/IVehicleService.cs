@@ -7,6 +7,6 @@ namespace SmogIt.Services.Contracts
     {
         Task<int> AddAsync(VehicleModel vehicle);
         Task<PagedResult<VehicleDetailsModel>> GetByClientAsync(int clientId, int pageSize, int page, string sortBy, string direction, string q);
-
+        Task UpdateAsync(int id, VehicleModel vehicle);
     }
 }
