@@ -9,5 +9,6 @@ namespace SmogIt.Services.Contracts
         Task<PagedResult<UserDetailsModel>> GetUsersAsync(int pageSize, int page, string sortBy = "FirstName", string direction = "asc", string q = "");
         Task<bool> UpdateAsync(int userId, UpdateUserModel user);
         Task<UserDetailsModel> FindAsync(int userId);
+        Task<UserDetailsModel?> FindAsync(string login, string password);
     }
 }

@@ -29,5 +29,11 @@ namespace SmogIt.Services
             var models = mapper.Map<List<VehicleDetailsModel>>(entities.Items);
             return entities.As(models);
         }
+        public async Task<List<VehicleDetailsModel>> GetAllByClientAsync(int clientId)
+        {
+            var entities = await vehicleRepository.GetAllByClientAsync(clientId);
+            var models = mapper.Map<List<VehicleDetailsModel>>(entities);
+            return models;
+        }
     }
 }

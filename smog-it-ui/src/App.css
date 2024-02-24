@@ -32,8 +32,9 @@ Button.table-btn {
     max-width: 26px;
     min-width: 26px;
 }
+
 Button.table-btn:not(:first-child) {
-   margin-left: 2px;
+    margin-left: 2px;
 }
 
 .modal {
@@ -198,10 +199,14 @@ div.search input {
     font-size: 1.25rem;
     line-height: 1.6;
     letter-spacing: 0.0075em;
-    color: #1976d2;
+    color: #011529;
 }
 
 div.drawer-content {
     padding: 16px;
     margin-top: 80px;
+    vertical-align: middle;
+}
+.clickable{
+    cursor: pointer;
 }

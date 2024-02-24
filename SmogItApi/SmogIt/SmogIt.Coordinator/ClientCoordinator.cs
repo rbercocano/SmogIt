@@ -61,5 +61,6 @@ namespace SmogIt.Coordinator
                 await appointmentServiceService.AddAync(appointmentId, service);
             }
         }
+        public async Task<List<VehicleDetailsModel>> GetAllByClientAsync(int clientId) => await vehicleService.GetAllByClientAsync(clientId);
     }
 }

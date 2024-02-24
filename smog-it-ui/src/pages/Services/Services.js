@@ -5,7 +5,7 @@ import Badge from "../../components/Badge/Badge";
 import Table from "../../components/Table/Table";
 import Title from "../../components/Title/Title";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencil, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import { Button, Drawer, Tooltip } from '@mui/material';
 import toast from 'react-hot-toast';
 import serviceService from '../../services/ServiceService';
@@ -15,7 +15,7 @@ import { CurrencyInput } from '../../components/FormInputs/FormattedInputs';
 import * as Yup from "yup";
 
 const validationSchema = Yup.object({
-    serviceName: Yup.string().required("Required field"),    
+    serviceName: Yup.string().required("Required field"),
     price: Yup.string().required("Required field")
 });
 
@@ -34,7 +34,7 @@ function Services() {
         openDrawer: false
     };
     const form = useForm({ defaultValues: { serviceName: "", description: "", active: "", price: "" } });
-    const { handleSubmit, setValue, control, setError, clearErrors, getValues, reset } = form;
+    const { handleSubmit, setValue, control, setError, clearErrors, reset } = form;
     useEffect(() => {
 
         serviceService.getAll().then(data =>

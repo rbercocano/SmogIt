@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SmogIt.Core.Extenstions;
 using SmogIt.Data.Context;
 using SmogIt.Data.Contracts;
 using SmogIt.Models.Entities;
@@ -56,6 +57,11 @@ namespace SmogIt.Data.Repositories
         public async Task<User?> FindAsync(int id)
         {
             var c = await context.Users.FindAsync(id);
+            return c;
+        }
+        public async Task<User?> FindAsync(string login, string password)
+        {
+            var c = await context.Users.FirstOrDefaultAsync(u => u.Login.ToLower() == login.ToLower() && password == u.Password);
             return c;
         }
     }

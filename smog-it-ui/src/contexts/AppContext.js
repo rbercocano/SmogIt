@@ -1,13 +1,16 @@
 
 import { MenuContextProvider } from './MenuContext';
 import { OverlayLoadingContextProvider } from './OverlayLoadingContext';
+import { UserContextPrivder } from './UserContext';
 const AppContext = ({ children }) => {
     return (
-        <MenuContextProvider>
-            <OverlayLoadingContextProvider>
-                {children}
-            </OverlayLoadingContextProvider>
-        </MenuContextProvider>
+        <UserContextPrivder>
+            <MenuContextProvider>
+                <OverlayLoadingContextProvider>
+                    {children}
+                </OverlayLoadingContextProvider>
+            </MenuContextProvider>
+        </UserContextPrivder>
     );
 };
 export default AppContext;

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Drawer, FormHelperText, Tooltip } from "@mui/material";
+import { Autocomplete, Button, Drawer, FormHelperText, TextField, Tooltip, Grid, Box, Typography } from "@mui/material";
 import serviceService from "../../services/ServiceService";
 import clientService from "../../services/ClientService";
 import statusService from "../../services/StatusService";
-import appointmentService from "../../services/AppointmentService";
 import { useForm } from "react-hook-form";
 import { FormInputSelect } from "../FormInputs/FormInputSelect";
 import * as Yup from "yup";
@@ -12,13 +11,16 @@ import './AppointmentModal.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import Title from '../Title/Title';
-import toast from 'react-hot-toast';
 import { except } from '../../utils/arrayUtils';
 import { CurrencyInput } from '../FormInputs/FormattedInputs';
+import { useDebouncedCallback } from 'use-debounce';
 
 function AppointmentModal({ onClose, onCancel, onSave, opened, appointmentDetails }) {
     const validationSchema = Yup.object({
-        service: Yup.number().min(1, 'Select a Service')
+        vehicleId: Yup.number().min(1, 'Select a Vehicle')
+    });
+    const apptValidationSchema = Yup.object({
+        vehicleId: Yup.number().min(1, 'Select a Vehicle').required('Select a Vehicle')
     });
     const [show, setShow] = useState(false);
     const [services, setServices] = useState([]);
@@ -27,10 +29,15 @@ function AppointmentModal({ onClose, onCancel, onSave, opened, appointmentDetail
     const [removedServices, setRemovedServices] = useState([]);
     const [selectedServices, setSelectedServices] = useState([]);
     const [showServiceError, setShowServiceError] = useState(false);
+    const [showClientError, setShowClientError] = useState(false);
+    const [customerSearch, setCustomerSearch] = useState('');
+    const [options, setOptions] = useState([]);
+    const [selectedOption, setSelectedOption] = useState(null);
+    const [vehicles, setVehicles] = useState([]);
     const form = useForm({
         defaultValues: {
             id: 0,
-            vehicleId: appointmentDetails.vehicleId,
+            vehicleId: appointmentDetails.vehicleId ?? 0,
             vehicle: '',
             client: '',
             notes: '',
@@ -45,19 +52,23 @@ function AppointmentModal({ onClose, onCancel, onSave, opened, appointmentDetail
         setShow(opened);
         if (opened) {
             reset();
+            setSelectedOption(null);
             setShowServiceError(false);
+            setShowClientError(false);
             if (appointmentDetails.appointmentId) {
                 setSelectedServices(appointmentDetails.services);
                 setValue('notes', appointmentDetails.notes);
                 setValue('statusId', appointmentDetails.statusId);
+                setValue('vehicle', `${appointmentDetails.year} ${appointmentDetails.make} ${appointmentDetails.model}`);
+                setValue('vehicleId', appointmentDetails.vehicleId ?? 0);
+                setValue('client', `${appointmentDetails.firstName} ${appointmentDetails.lastName}`);
             }
             else {
                 setSelectedServices([]);
                 setValue('service', 0);
                 setValue('statusId', 1);
+                setValue('vehicleId', 0);
             }
-            setValue('vehicle', `${appointmentDetails.year} ${appointmentDetails.make} ${appointmentDetails.model}`);
-            setValue('client', `${appointmentDetails.firstName} ${appointmentDetails.lastName}`);
             let p1 = serviceService.getAll();
             let p2 = statusService.getAll();
             Promise.all([p1, p2]).then(r => {
@@ -68,36 +79,87 @@ function AppointmentModal({ onClose, onCancel, onSave, opened, appointmentDetail
             });
         }
     }, [opened]);
+    useEffect(() => {
+        if (!appointmentDetails.clientId && !selectedOption)
+            searchCustomers();
+        if (selectedOption) {
+            setOptions([selectedOption]);
+        }
+    }, [customerSearch]);
+    useEffect(() => {
+        if (selectedOption) {
+            clientService.getAllVehicles(selectedOption.id).then(r => {
+                setVehicles(r);
+            });
+        }
+        else
+            setVehicles([]);
+    }, [selectedOption]);
+
+    const searchCustomers = useDebouncedCallback((e) => {
+        clientService.search(15, 1, 'firstName', 'asc', customerSearch).then(r => {
+            let data = r?.items ?? [];
+            let newOptions = data.map(d => {
+                let text = `${d.firstName} ${d.lastName}`;
+                let secondaryText = d.phone;
+                let id = d.clientId;
+                let offset = text.toLowerCase().indexOf(customerSearch.toLowerCase());
+                let length = customerSearch.length;
+                return { id, text, secondaryText, offset, length };
+            });
+            setOptions(newOptions);
+        });
+    }, 250);
     const handleCancel = () => {
         setShow(false);
         onCancel();
     };
     const save = (data) => {
-        if (selectedServices.length === 0) {
-            setShowServiceError(true);
-            return;
-        }
-        let req = { appointmentId: appointmentDetails.appointmentId, vehicleId: appointmentDetails.vehicleId, statusId: data.statusId, notes: data.notes };
-        if (appointmentDetails.appointmentId) {
-            req.servicesToAdd = selectedServices.filter(s => s.appointmentServiceId === null).map(s => { return { serviceId: s.serviceId, price: s.price } });
-            req.servicesToRemove = [...removedServices];
-            clientService.updateAppointment(req).then((id) => {
+        try {
+            let hasErrors = false;
+            if (selectedOption === null && !appointmentDetails?.appointmentId) {
+                setShowClientError(true);
+                hasErrors = true;
+            }
+
+            if (selectedServices.length === 0) {
+                setShowServiceError(true);
+                hasErrors = true;
+            }
+            if (!appointmentDetails?.appointmentId)
+                apptValidationSchema.validateSync(data, { abortEarly: false });
+            if (hasErrors) return;
+            let req = { appointmentId: appointmentDetails.appointmentId, vehicleId: appointmentDetails.vehicleId, statusId: data.statusId, notes: data.notes };
+            if (appointmentDetails.appointmentId) {
+                req.servicesToAdd = selectedServices.filter(s => s.appointmentServiceId === null).map(s => { return { serviceId: s.serviceId, price: s.price } });
+                req.servicesToRemove = [...removedServices];
+                clientService.updateAppointment(req).then((id) => {
+                    setValue("id", id);
+                    clearErrors();
+                    setShowServiceError(false);
+                    if (onSave)
+                        onSave({ ...req });
+                });
+                return;
+            }
+            req.vehicleId = data.vehicleId;
+            req.clientId = selectedOption.id;
+            req.services = selectedServices.map(s => { return { serviceId: s.serviceId, price: s.price } });
+            clientService.addAppointment(req).then((id) => {
                 setValue("id", id);
                 clearErrors();
                 setShowServiceError(false);
                 if (onSave)
-                    onSave({ ...req });
+                    onSave({ ...req, appointmentId: id });
             });
-            return;
+        } catch (e) {
+            e.inner.forEach((err) => {
+                setError(err.path, {
+                    type: "manual",
+                    message: err.errors[0],
+                });
+            });
         }
-        req.services = selectedServices.map(s => { return { serviceId: s.serviceId, price: s.price } });
-        clientService.addAppointment(req).then((id) => {
-            setValue("id", id);
-            clearErrors();
-            setShowServiceError(false);
-            if (onSave)
-                onSave({ ...req, appointmentId: id });
-        });
     };
     const handleSelect = (e) => {
         let service = services.filter(f => f.serviceId === e.target.value);
@@ -113,8 +175,7 @@ function AppointmentModal({ onClose, onCancel, onSave, opened, appointmentDetail
             validationSchema.validateSync({
                 service: id
             }, { abortEarly: false });
-            if (appointmentDetails.appointmentId)
-                setSelectedServices([...selectedServices, { appointmentServiceId: null, serviceId: service[0].serviceId, serviceName: service[0].serviceName, notes: getValues('notes'), price: parseFloat(getValues('price') ?? 0), originalPrice: parseFloat(service[0].price) ?? 0 }])
+            setSelectedServices([...selectedServices, { appointmentServiceId: null, serviceId: service[0].serviceId, serviceName: service[0].serviceName, notes: getValues('notes'), price: parseFloat(getValues('price') ?? 0), originalPrice: parseFloat(service[0].price) ?? 0 }])
 
             setServices(services.filter(f => f.serviceId !== service[0].serviceId && f.active));
             clearErrors();
@@ -155,10 +216,57 @@ function AppointmentModal({ onClose, onCancel, onSave, opened, appointmentDetail
 
                     <div className="row">
                         <div className="col-12 mb-2">
-                            <FormInputText name={"client"} control={control} label={"Client"} disabled={true} />
+                            {appointmentDetails.clientId ?
+                                <FormInputText name={"client"} control={control} label={"Client"} disabled={true} />
+                                :
+                                <Autocomplete
+                                    id="clients"
+                                    getOptionLabel={(option) => option.text}
+                                    filterOptions={(x) => x}
+                                    options={options}
+                                    autoComplete
+                                    includeInputInList
+                                    filterSelectedOptions
+                                    value={selectedOption}
+                                    noOptionsText="No clients"
+                                    onChange={(event, newValue) => {
+                                        setShowClientError(false);
+                                        setSelectedOption(newValue);
+                                    }}
+                                    onInputChange={(event, newInputValue) => {
+                                        setCustomerSearch(newInputValue);
+                                    }}
+                                    renderInput={(params) => (
+                                        <>
+                                            <TextField {...params} label="Search client" fullWidth size="small" error={showClientError} />
+                                            {showClientError && <FormHelperText error style={{ marginLeft: '15px' }}>Select a Client</FormHelperText>}
+                                        </>
+                                    )}
+                                    renderOption={(props, option) => {
+                                        console.log(option);
+                                        return (
+                                            <li {...props} key={option.id}>
+                                                <Grid container alignItems="center">
+                                                    <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                                                        <Box component="span">
+                                                            {option.text}
+                                                        </Box>
+                                                        {!!option.secondaryText && <Typography variant="body2" color="text.secondary">
+                                                            {option.secondaryText}
+                                                        </Typography>}
+                                                    </Grid>
+                                                </Grid>
+                                            </li>
+                                        );
+                                    }}
+                                />
+                            }
                         </div>
                         <div className="col-12 mb-2">
-                            <FormInputText name={"vehicle"} control={control} label={"Vehicle"} disabled={true} />
+                            {appointmentDetails.clientId ?
+                                <FormInputText name={"vehicle"} control={control} label={"Vehicle"} disabled={true} /> :
+                                <FormInputSelect name={"vehicleId"} control={control} label={"Vehicle"} items={[{ text: 'Select one', value: 0 }, ...vehicles.map((s) => { return { text: `${s.year} ${s.make} ${s.model}`, value: s.vehicleId } })]} />
+                            }
                         </div>
                         <div className="col-12 mb-2">
                             <FormInputSelect name={"statusId"} control={control} label={"Status"} onSelectItem={handleSelect} items={[...statuses.map((s) => { return { text: s.statusName, value: s.statusId } })]}
@@ -193,7 +301,7 @@ function AppointmentModal({ onClose, onCancel, onSave, opened, appointmentDetail
                                                         <td>{s.price !== s.originalPrice && <s>${s.originalPrice.toFixed(2)}</s>} ${s.price.toFixed(2)}</td>
                                                         <td>
                                                             <Tooltip title='Remove service'>
-                                                                <FontAwesomeIcon icon={faTimesCircle} onClick={() => removeService(s)} />
+                                                                <FontAwesomeIcon className='clickable' icon={faTimesCircle} onClick={() => removeService(s)} />
                                                             </Tooltip>
                                                         </td>
                                                     </tr>

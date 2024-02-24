@@ -4,10 +4,11 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
+import { Route, Routes, BrowserRouter, Navigate } from 'react-router-dom';
 import { faHouse, faUsers, faCalendar, faCog, faUser, faUserCircle, faDisplay } from '@fortawesome/free-solid-svg-icons';
 import Customers from './pages/Customers/Customers';
 import Customer from './pages/Customer/Customer';
+import Login from './pages/Login/Login';
 import ContentWrapper from './components/ContentWrapper/ContentWrapper';
 import MenuItem from './components/MenuItem/MenuItem';
 import AppContext from './contexts/AppContext';
@@ -19,7 +20,9 @@ import Services from './pages/Services/Services';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Users from './pages/Users/Users';
 import Queue from './pages/Queue/Queue';
- 
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+
+
 let theme = createTheme({});
 
 theme = createTheme(theme, {
@@ -34,35 +37,24 @@ theme = createTheme(theme, {
 });
 function App() {
   return (
-    <div className="App">
-      <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
+      <AppContext>
         <BrowserRouter>
-          <AppContext>
-            <Toaster />
-            <Header />
-            <Menu >
-              <MenuItem text={'Home'} icon={faHouse} />
-              <MenuItem text={'Customers'} icon={faUsers} link={'/customers'} />
-              <MenuItem text={'Appointments'} icon={faCalendar} link={'/appointments'} />
-              <MenuItem text={'Services'} icon={faCog} link={'/services'} />
-              <MenuItem text={'Users'} icon={faUserCircle} link={'/users'} />
-              <MenuItem text={'Appointment Queue'} icon={faDisplay} link={'/queue'} />
-            </Menu>
-            <ContentWrapper>
-              <Routes>
-                <Route path='/customer' element={<Customer />} />
-                <Route path='/customer/:id' element={<Customer />} />
-                <Route path='/customers' element={<Customers />} />
-                <Route path='/appointments' element={<Appointments />} />
-                <Route path='/services' element={<Services />} />
-                <Route path='/users' element={<Users />} />
-                <Route path='/queue' element={<Queue />} />
-              </Routes>
-            </ContentWrapper>
-          </AppContext>
+          <Routes>
+            <Route path='/login' element={<Login />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path='/customer' element={<Customer />} />
+              <Route path='/customer/:id' element={<Customer />} />
+              <Route path='/customers' element={<Customers />} />
+              <Route path='/appointments' element={<Appointments />} />
+              <Route path='/services' element={<Services />} />
+              <Route path='/users' element={<Users />} />
+              <Route path='/queue' element={<Queue />} />
+            </Route>
+          </Routes>
         </BrowserRouter>
-      </ThemeProvider>
-    </div>
+      </AppContext>
+    </ThemeProvider>
   );
 }
 

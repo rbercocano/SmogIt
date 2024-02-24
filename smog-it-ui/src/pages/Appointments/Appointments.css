@@ -1,7 +1,6 @@
 .master-row td:first-child {
     width: 41px;
 }
-
 tr.master-row td:nth-child(6) {
     text-align: right !important;
 }

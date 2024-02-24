@@ -50,5 +50,15 @@ namespace SmogIt.Data.Repositories
             context.Vehicles.Update(vehicle);
             await context.SaveChangesAsync();
         }
+        public async Task<List<Vehicle>> GetAllByClientAsync(int clientId)
+        {
+            var query = context.Vehicles
+                .Include(v => v.VehicleModel)
+                .ThenInclude(v => v.VehicleMake)
+                .Where(v => v.ClientId == clientId);
+            var data = await query.OrderBy(q=>q.Year).ToListAsync();
+            return data;
+        }
+
     }
 }

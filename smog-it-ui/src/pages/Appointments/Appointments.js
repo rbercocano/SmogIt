@@ -50,6 +50,9 @@ function Appointments() {
             default: return state;
         }
     };
+    const addNew = () => {
+        dispatch({ type: ACTIONS.APPT_SELECTED, payload: {} });
+    };
     const selectAppointment = (rowData) => {
         dispatch({ type: ACTIONS.APPT_SELECTED, payload: rowData });
     };
@@ -79,7 +82,7 @@ function Appointments() {
             <React.Fragment key={appointmentId}>
                 <tr className='master-row odd'>
                     <td>
-                        <FontAwesomeIcon icon={!rowData.expanded ? faChevronRight : faChevronDown} onClick={() => toggleDetails(appointmentId)} />
+                        <FontAwesomeIcon className='clickable' icon={!rowData.expanded ? faChevronRight : faChevronDown} onClick={() => toggleDetails(appointmentId)} />
                     </td>
                     <td>{`${firstName} ${lastName}`}</td>
                     <td>{`${year} ${make} ${model} ${licensePlate}`}</td>
@@ -135,6 +138,9 @@ function Appointments() {
         <div className='app-container-wrapper col-12'>
             <div className="app-container " >
                 <Title title="Appointments" />
+                <div className='mt-2 mb-2' style={{ justifyContent: 'flex-end', display: 'flex' }}>
+                    <Button variant="contained" onClick={addNew}>Add New</Button>
+                </div>
                 <Table data={state.appointments} rowTemplate={apptRowTemplate} headerTemplate={apptHeaderTemplate} onChange={handleApptTableChange}
                     sortBy={state.apptSort.sortBy} direction={state.apptSort.direction} serverSide={true} />
             </div>
