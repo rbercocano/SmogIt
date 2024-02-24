@@ -11,5 +11,7 @@ namespace SmogIt.Coordinator
         public async Task<int> AddAsync(UserModel client) => await userService.AddAsync(client);
         public async Task UpdateAsync(int id, UpdateUserModel user) => await userService.UpdateAsync(id, user);
         public async Task<UserDetailsModel?> FindAsync(int id) => await userService.FindAsync(id);
+        public async Task<UserDetailsModel?> FindAsync(string login, string password) => await userService.FindAsync(login, password);
+
     }
 }

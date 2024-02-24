@@ -6,7 +6,6 @@ import React, { useEffect, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { Tooltip, Button } from "@mui/material";
 import * as Yup from "yup";
-import './Customer.css';
 import { faCalendar, faChevronDown, faChevronRight, faPlus, faPencil } from "@fortawesome/free-solid-svg-icons";
 import Badge from "../../components/Badge/Badge";
 import Toolbar from "../../components/Toolbar/Toolbar";
@@ -251,7 +250,7 @@ function Customer() {
 			<React.Fragment key={appointmentId}>
 				<tr className='master-row odd'>
 					<td>
-						<FontAwesomeIcon icon={!rowData.expanded ? faChevronRight : faChevronDown} onClick={() => toggleDetails(appointmentId)} />
+						<FontAwesomeIcon className="clickable" icon={!rowData.expanded ? faChevronRight : faChevronDown} onClick={() => toggleDetails(appointmentId)} />
 					</td>
 					<td>{`${year} ${make} ${model} ${licensePlate}`}</td>
 					<td className='text-center'><Badge text={status} variant={variant} /></td>

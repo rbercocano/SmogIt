@@ -60,6 +60,12 @@ namespace SmogIt.API.Controllers.v1
             return Ok();
         }
 
+        [HttpGet("{clientId}/Vehicles")]
+        public async Task<ActionResult<ClientDetailsModel>> GetAllVehiclesByClientIdAsync(int clientId)
+        {
+            var data = await clientCoordinator.GetAllByClientAsync(clientId);
+            return Ok(data);
+        }
         [HttpGet("{clientId}/Vehicles/{pageSize:int}/{page:int}")]
         public async Task<ActionResult<ClientDetailsModel>> GetVehiclesByClientIdAsync(int clientId, int pageSize, int page, [FromQuery] string? sortBy, [FromQuery] string? direction, [FromQuery] string? q)
         {

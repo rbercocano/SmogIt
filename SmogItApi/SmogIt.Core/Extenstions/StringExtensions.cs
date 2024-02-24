@@ -8,7 +8,9 @@ namespace SmogIt.Core.Extenstions
     {
         public static string FormatAsUSPhoneNumber(this string input)
         {
+            if (input.Contains("%")) return input;
             string numericOnly = Regex.Replace(input, @"[^\d]", "");
+            if (numericOnly.Length < 7) return input;
             return string.Format("({0}) {1}-{2}",
                 numericOnly.Substring(0, 3),
                 numericOnly.Substring(3, 3),

@@ -15,6 +15,9 @@ const userService = {
   },
   update: async (id, User) => {
     return await ApiClient.put(`${process.env.REACT_APP_API_BASE_URL}/User/${id}`, User);
+  },
+  authenticate: async (login, password) => {
+    return await ApiClient.post(`${process.env.REACT_APP_API_BASE_URL}/User/Authenticate`, { login, password });
   }
 };
 

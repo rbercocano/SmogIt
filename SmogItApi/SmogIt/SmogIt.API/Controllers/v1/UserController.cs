@@ -33,6 +33,15 @@ namespace SmogIt.API.Controllers.v1
             var id = await userCoordinator.AddAsync(User);
             return new ObjectResult(id) { StatusCode = 201 };
         }
+        [HttpPost("Authenticate")]
+        public async Task<ActionResult> LoginAsync([FromBody] LoginModel user)
+        {
+            var id = await userCoordinator.FindAsync(user.Login, user.Password);
+            if (notificationService.HasNotifications())
+                return BadRequest(notificationService.Notifications);
+
+            return new ObjectResult(id) { StatusCode = 201 };
+        }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAsync(int id, [FromBody] UpdateUserModel User)

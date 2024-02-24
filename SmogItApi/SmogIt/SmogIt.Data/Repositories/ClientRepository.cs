@@ -17,6 +17,8 @@ namespace SmogIt.Data.Repositories
                 query = query.Where(c =>
                     c.FirstName.ToLower().Contains(q) ||
                     c.LastName.ToLower().Contains(q) ||
+                    c.Phone.ToLower().Contains(q) ||
+                    c.Phone.ToLower().Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "").Contains(q) ||
                     c.Email.ToLower().Contains(q));
             }
 

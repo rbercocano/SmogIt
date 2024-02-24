@@ -11,6 +11,7 @@ using SmogIt.Core.Services;
 using SmogIt.Models.Profiles;
 using SmogIt.Services;
 using SmogIt.Services.Contracts;
+using SmogIt.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,10 +87,9 @@ if (app.Environment.IsDevelopment())
     });
 }
 app.UseCors();
-//app.UseHttpsRedirection();
 app.UseAuthorization();
 app.UseExceptionHandler("/error");
-
+app.UseApiKeyValidation();
 app.MapControllers();
 
 app.Run();

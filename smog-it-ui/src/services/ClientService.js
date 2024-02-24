@@ -29,6 +29,10 @@ const clientService = {
     if (q) params.q = q;
     return await ApiClient.get(`${process.env.REACT_APP_API_BASE_URL}/Client/${clientId}/Vehicles/${pageSize}/${page}`, params);
   },
+  getAllVehicles: async (clientId) => {
+    const params = {};
+    return await ApiClient.get(`${process.env.REACT_APP_API_BASE_URL}/Client/${clientId}/Vehicles`, params);
+  },
   addAppointment: async (appointment) => {
     return await ApiClient.post(`${process.env.REACT_APP_API_BASE_URL}/Client/Appointments`, appointment);
   },

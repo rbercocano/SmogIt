@@ -6,7 +6,7 @@ function ContentWrapper({ children }) {
     const { expanded } = useContext(MenuContext);
     const { loading } = useContext(OverlayLoadingContext);
     return (
-        <>
+        <div className='App'>
             <div className={expanded ? 'content expanded' : 'content'}>
                 {children}
             </div>
@@ -18,7 +18,7 @@ function ContentWrapper({ children }) {
                     </div>
                 </div>
             }
-        </>
+        </div>
     )
 }
 export default ContentWrapper;

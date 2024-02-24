@@ -1,5 +1,4 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Moment from 'moment';
+
 import React, { useEffect, useState } from "react";
 import './Queue.css';
 import appointmentService from "../../services/AppointmentService";

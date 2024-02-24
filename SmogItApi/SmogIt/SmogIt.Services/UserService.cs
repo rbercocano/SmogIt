@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SmogIt.Core.Domains;
+using SmogIt.Core.Services;
 using SmogIt.Data.Contracts;
 using SmogIt.Models.DTO;
 using SmogIt.Models.Entities;
@@ -7,7 +8,7 @@ using SmogIt.Services.Contracts;
 
 namespace SmogIt.Services
 {
-    public class UserService(IUserRepository userRepository, IMapper mapper) : IUserService
+    public class UserService(IUserRepository userRepository, IMapper mapper, NotificationService notificationService) : IUserService
     {
         public async Task<int> AddAsync(UserModel user)
         {
@@ -18,6 +19,21 @@ namespace SmogIt.Services
         public async Task<UserDetailsModel> FindAsync(int userId)
         {
             var entity = await userRepository.FindAsync(userId);
+            return mapper.Map<UserDetailsModel>(entity);
+        }
+        public async Task<UserDetailsModel?> FindAsync(string login, string password)
+        {
+            var entity = await userRepository.FindAsync(login, password);
+            if (entity == null)
+            {
+                notificationService.AddNotification("Invalid username / password");
+                return null;
+            }
+            if (!entity.Active)
+            {
+                notificationService.AddNotification("This user has been disabled");
+                return null;
+            }
             return mapper.Map<UserDetailsModel>(entity);
         }
 
